@@ -1,45 +1,79 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
-		//Inmutabilidad: los valores no deben cambiar luego de que han sido definidos. Esto permite la persistencia de los datos y evita efectos secundarios que pueden generar la mutación
+    <script type="text/javascript">
+        // INMUTABILIDAD: PRINCIPIO FUNDAMENTAL DE PROGRAMACIÓN FUNCIONAL
+        // La inmutabilidad establece que los valores no deben cambiar luego de que han sido definidos.
+        // Esto permite la persistencia de los datos y evita efectos secundarios que pueden generar la mutación
 
-		//ejemplo de mutación:
+        // EJEMPLO DE FUNCIÓN QUE RESPETA LA INMUTABILIDAD:
+        // Esta función crea una nueva copia del objeto en lugar de modificar el original
+        function cambiarResidencia(persona, nuevaCiudad){
+            // Object.assign() crea un nuevo objeto combinando:
+            // 1. Un objeto vacío como destino {}
+            // 2. Las propiedades del objeto persona
+            // 3. La propiedad modificada { cuidad: nuevaCiudad }
+            let copia = Object.assign({}, persona, { cuidad: nuevaCiudad});
+            
+            // La siguiente línea está comentada porque viola el principio de inmutabilidad
+            // Esta línea modificaría el objeto original, causando efectos secundarios
+            //persona.cuidad = nuevaCiudad;
+            
+            // Devuelve la nueva copia con la ciudad actualizada
+            return copia;
+        }
 
-		function cambiarResidencia(persona, nuevaCiudad){
-			let copia = Object.assign({}, persona, { cuidad: nuevaCiudad});
-			//persona.cuidad = nuevaCiudad;
-			return copia;
-		}
+        // Objeto original que no debe ser modificado
+        const persona = {
+            nombre: 'Robin',
+            cuidad: 'Dublín'
+        }
 
-		const persona = {
-			nombre: 'Robin',
-			cuidad: 'Dublín'
-		}
+        // Llamamos a la función y guardamos el resultado en una nueva variable
+        let nuevaPersona = cambiarResidencia(persona, 'Montreal');
 
-		let nuevaPersona = cambiarResidencia(persona, 'Montreal');
+        // Verificamos que el objeto original no ha sido modificado
+        console.log(persona); // Output: { nombre: 'Robin', cuidad: 'Dublín' }
 
-		console.log(persona);
+        // Verificamos que se ha creado un nuevo objeto con los cambios
+        console.log(nuevaPersona); // Output: { nombre: 'Robin', cuidad: 'Montreal' }
 
-		console.log(nuevaPersona);
+        /* OTROS MÉTODOS PARA TRABAJAR CON INMUTABILIDAD:
+         * 
+         * 1. Operador spread (...): Una alternativa moderna a Object.assign
+         *    const nuevaPersona = { ...persona, cuidad: nuevaCiudad };
+         * 
+         * 2. Métodos inmutables para arrays:
+         *    - map(): transforma elementos sin modificar el array original
+         *    - filter(): filtra elementos sin modificar el array original
+         *    - concat(): combina arrays creando uno nuevo
+         *    - slice(): extrae porciones creando un nuevo array
+         * 
+         * 3. A evitar (métodos mutables):
+         *    - push(), pop(), shift(), unshift(), splice()
+         *    - Asignación directa: arr[i] = nuevoValor
+         */
 
-		/*
-		const arr = new Array(1,2,3,4,5);
-		
-		const arr2 = arr.map(valor => valor*2);
-		console.log(arr2);
-		
-		const arr3 = arr.filter(valor => valor >= 3);
-		console.log(arr3);
+        /*
+        const arr = new Array(1,2,3,4,5);
+        
+        // map() crea un nuevo array transformando cada elemento
+        const arr2 = arr.map(valor => valor*2);
+        console.log(arr2); // [2,4,6,8,10]
+        
+        // filter() crea un nuevo array con los elementos que cumplen una condición
+        const arr3 = arr.filter(valor => valor >= 3);
+        console.log(arr3); // [3,4,5]
 
-		console.log(arr);
-		*/
+        // El array original permanece sin cambios
+        console.log(arr); // [1,2,3,4,5]
+        */
 
-	</script>
+    </script>
 
 </body>
 </html>

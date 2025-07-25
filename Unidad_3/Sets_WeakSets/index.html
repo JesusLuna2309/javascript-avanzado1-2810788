@@ -1,38 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		const objetoSet = new Set([1, 'string', {}, {nombre: 'Natalia'}]);
+        // Creamos un nuevo Set con valores iniciales
+        // Set es una colección de valores únicos de cualquier tipo
+        // El constructor puede recibir un iterable (aquí un array) con valores iniciales
+        const objetoSet = new Set([1, 'string', {}, {nombre: 'Natalia'}]);
 
-		objetoSet.add(12);
-		objetoSet.add(12);
-		
-		console.log(objetoSet.has(12));
-		console.log(objetoSet.size);
+        // Añadimos un valor al Set con el método .add()
+        objetoSet.add(12);
+        
+        // Intentamos añadir un valor duplicado
+        // Los Sets solo almacenan valores únicos, así que esta operación no tiene efecto
+        objetoSet.add(12);
+        
+        // Comprobamos si un valor existe en el Set
+        console.log(objetoSet.has(12)); // true - el valor 12 existe en el Set
+        
+        // Obtenemos el número de elementos en el Set
+        console.log(objetoSet.size); // 5 - hay cinco elementos únicos
+        // [1, 'string', {}, {nombre: 'Natalia'}, 12]
+        // Nota: los dos objetos {} y {nombre: 'Natalia'} se consideran diferentes aunque parezcan iguales
 
-		objetoSet.forEach(value=>{
-			console.log(value);
-		})
+        // Iteración 1: usando forEach
+        // La función callback recibe: valor, valor (repetido), y el Set completo
+        objetoSet.forEach(value => {
+            console.log(value);
+            // Imprime cada valor del Set en el orden de inserción:
+            // 1
+            // 'string'
+            // {}
+            // {nombre: 'Natalia'}
+            // 12
+        })
 
-		for(value of objetoSet){
-			console.log(value);
-		}
-		
+        // Iteración 2: usando for...of (posible porque Set es iterable)
+        for(value of objetoSet){
+            console.log(value);
+            // Mismo resultado que forEach, imprime los valores en orden de inserción
+        }
+        
+        // WeakSet: similar a Set, pero con importantes diferencias
+        // 1. Solo puede contener objetos (no valores primitivos)
+        // 2. Las referencias a los objetos son "débiles"
+        // 3. No es iterable, no tiene size, no tiene forEach
+        const objetoWeakSet = new WeakSet([{}, {nombre: 'Natalia'}]);
+        
+        // Esto generará un error: los valores en WeakSet deben ser objetos
+        // TypeError: Invalid value used in weak set
+        objetoWeakSet.add(12);
 
-		const objetoWeakSet = new WeakSet([{}, {nombre: 'Natalia'}]);
-		
-		objetoWeakSet.add(12);
+        // Esto generará un error: WeakSet no es iterable
+        // TypeError: objetoWeakSet is not iterable
+        for(value of objetoWeakSet){
+            console.log(value);
+        }
+        
+        // Casos de uso de Set:
+        // - Eliminar duplicados de un array
+        // - Almacenar conjuntos de valores únicos
+        // - Comprobar pertenencia a un conjunto de forma eficiente
+        
+        // Casos de uso de WeakSet:
+        // - Marcar objetos (por ejemplo, para evitar procesarlos dos veces)
+        // - Almacenar objetos "visitados" sin impedir su recolección de basura
+        // - Asociar metadatos a objetos DOM sin causar memory leaks
 
-		for(value of objetoWeakSet){
-			console.log(value);
-		}
-		
-	</script>
+    </script>
 
 </body>
 </html>

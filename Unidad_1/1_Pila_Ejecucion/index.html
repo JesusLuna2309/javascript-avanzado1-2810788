@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+
+    <script type="text/javascript">
+
+        // Función que se va a colocar en la pila cuando se llame desde prueba2
+        function prueba1() {
+            console.log("Estoy dentro de prueba1");
+            return "Fin prueba1";
+        }
+
+        // Función que se llama desde el contexto global
+        function prueba2() {
+            console.log("Inicio de prueba2");
+            
+            // Llamamos a prueba1, lo que coloca a prueba1 sobre la pila de ejecución.
+            // El contexto de prueba2 queda "en pausa" hasta que prueba1 termine.
+            const resultado = prueba1();
+            
+            // Cuando prueba1 retorna, se reanuda prueba2 con el valor devuelto.
+            console.log("Volvemos a prueba2 con:", resultado);
+            return "Fin prueba2";
+        }
+
+        // Esto está en el contexto global, es el punto de entrada del programa.
+        const temp = prueba2();
+        // Cuando prueba2 retorna, volvemos al contexto global y mostramos el resultado.
+        console.log("De vuelta en el contexto global con:", temp);
+
+        // Función recursiva que crea un nuevo contexto cada vez que se llama
+        function crearNuevoContexto(n) {
+            console.log("Entrando en contexto con n =", n);
+
+            // Condición de corte: cuando n llega a 0, ya no se llama más a sí misma.
+            // Esto evita un bucle infinito y el desbordamiento de la pila.
+            if (n === 0) {
+                console.log("¡n es 0, detenemos aquí!");
+                return;
+            }
+
+            // Llamada recursiva: se apila una nueva ejecución con n-1.
+            // Cada llamada crea un nuevo contexto en la pila.
+            crearNuevoContexto(n - 1);
+
+            // Esta línea se ejecuta al "volver" de la función interna,
+            // es decir, cuando la llamada recursiva retorna.
+            console.log("Saliendo del contexto con n =", n);
+        }
+
+        // Llamamos desde el contexto global.
+        // Esto inicia la recursión y muestra cómo la pila de ejecución crece y se reduce.
+        crearNuevoContexto(3);
+
+    </script>
+
+</body>
+</html>

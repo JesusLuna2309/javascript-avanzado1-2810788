@@ -1,69 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
-	<style type="text/css">
-		#contenedor-padre{
-			width: 500px;
-			height: 500px;
-			background-color: #7CB342;
-		}
+    <title></title>
+    <style type="text/css">
+        /* Estilo para el contenedor exterior (verde) */
+        #contenedor-padre{
+            width: 500px;
+            height: 500px;
+            background-color: #7CB342; /* Verde */
+        }
 
-		#contenedor-hijo1{
-			width: 300px;
-			height: 300px;
-			background-color: #FFB300;
-		}
+        /* Estilo para el contenedor intermedio (amarillo) */
+        #contenedor-hijo1{
+            width: 300px;
+            height: 300px;
+            background-color: #FFB300; /* Amarillo */
+        }
 
-		#contenedor-hijo2{
-			width: 100px;
-			height: 100px;
-			background-color: #6D4C41;
-		}
+        /* Estilo para el contenedor más interno (marrón) */
+        #contenedor-hijo2{
+            width: 100px;
+            height: 100px;
+            background-color: #6D4C41; /* Marrón */
+        }
 
-		span{
-			color: #FFFFFF;
-			font-weight: bold;
-			padding: 5px;
-			font-family: Arial;
-		}
-
-	</style>
+        /* Estilo para las etiquetas de texto dentro de cada contenedor */
+        span{
+            color: #FFFFFF; /* Texto blanco */
+            font-weight: bold; /* Texto en negrita */
+            padding: 5px; /* Espaciado interno */
+            font-family: Arial; /* Tipo de letra */
+        }
+    </style>
 </head>
 <body>
+    <!-- Estructura anidada de divs que demostrará el burbujeo de eventos -->
+    <div id="contenedor-padre">
+        <span>Padre</span>
+        <div id="contenedor-hijo1">
+            <span>Hijo #1</span>
+            <div id="contenedor-hijo2">
+                <span>Hijo #2</span>
+            </div>
+        </div>
+    </div>
 
-	<div id="contenedor-padre">
-		<span>Padre</span>
-		<div id="contenedor-hijo1">
-			<span>Hijo #1</span>
-			<div id="contenedor-hijo2">
-				<span>Hijo #2</span>
-			</div>
-		</div>
-	</div>
+    <script type="text/javascript">
+        // EVENT LISTENERS PARA DEMOSTRAR BURBUJEO (BUBBLING)
 
-	<script type="text/javascript">
+        // Evento click en el contenedor padre (verde)
+        document.getElementById('contenedor-padre').addEventListener('click', function(event){
+            // Este manejador se ejecutará después de los hijos por el burbujeo
+            // a menos que se detenga la propagación
+            console.log('Click en padre con el target:', event.target);
+            // event.target es el elemento donde se originó el click
+            // Puede ser el padre, o cualquiera de sus hijos, dependiendo de dónde se hizo click
+        });
 
-		document.getElementById('contenedor-padre').addEventListener('click', function(event){
-			console.log('Click en padre con el target:', event.target);
-		});
+        // Evento click en el contenedor hijo1 (amarillo)
+        document.getElementById('contenedor-hijo1').addEventListener('click', function(event){
+            // Este manejador se ejecutará antes que el del padre, pero después
+            // que el del hijo2 si el click ocurre en hijo2
+            console.log('Click en hijo #1');
+            console.log('Yo soy: ', event.currentTarget)
+            // event.currentTarget siempre es el elemento al que está vinculado el evento
+            // En este caso, siempre será contenedor-hijo1, independientemente de dónde se hizo click
+        });
 
-		document.getElementById('contenedor-hijo1').addEventListener('click', function(event){
-			console.log('Click en hijo #1');
-			console.log('Yo soy: ', event.currentTarget)
-		});
+        // Primer evento click en el contenedor hijo2 (marrón)
+        document.getElementById('contenedor-hijo2').addEventListener('click', function(event){
+            // Este manejador se ejecutará primero si el click ocurre en hijo2
+            // Detiene la propagación del evento hacia arriba (burbujeo)
+            event.stopPropagation(); // Evita que el evento se propague a contenedor-hijo1 y contenedor-padre
+            
+            // Detiene cualquier otro manejador del mismo evento en el mismo elemento
+            event.stopImmediatePropagation(); // Evita que se ejecute el siguiente addEventListener para hijo2
+            
+            console.log('Click en hijo #2');
+        });
 
-		document.getElementById('contenedor-hijo2').addEventListener('click', function(event){
-			event.stopPropagation();//detiene bubbling al contenedor padre
-			event.stopImmediatePropagation();//detiene bubbling a cualquier otro listener
-			console.log('Click en hijo #2');
-		});
-
-		document.getElementById('contenedor-hijo2').addEventListener('click', function(event){
-			console.log('Click en hijo 2, segunda vez');
-		});
-
-	</script>
-
+        // Segundo evento click en el contenedor hijo2
+        // Este manejador NUNCA se ejecutará debido a event.stopImmediatePropagation() en el manejador anterior
+        document.getElementById('contenedor-hijo2').addEventListener('click', function(event){
+            console.log('Click en hijo 2, segunda vez');
+        });
+    </script>
 </body>
 </html>

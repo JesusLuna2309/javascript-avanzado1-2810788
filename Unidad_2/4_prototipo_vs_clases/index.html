@@ -7,36 +7,47 @@
 
 	<script type="text/javascript">
 
-		const Persona = function(nombre){
-			this.nombre = nombre;
-		}
+    // Forma tradicional: función constructora
+    const Persona = function(nombre){
+        this.nombre = nombre; // La propiedad 'nombre' se asigna a cada instancia creada con 'new Persona'
+    }
 
-		//__proto__
-		Persona.prototype.decirNombre = function(){
-			console.log('Mi nombre es: ', this.nombre);
-		}
+    // Añadimos un método al prototipo de Persona
+    Persona.prototype.decirNombre = function(){
+        console.log('Mi nombre es: ', this.nombre);
+    }
+    // Este método estará disponible para todas las instancias de Persona,
+    // pero solo se almacena una vez en el prototipo, no en cada objeto.
 
-		const persona1 = new Persona('Lincy');
-		persona1.decirNombre();
+    const persona1 = new Persona('Lincy');
+    persona1.decirNombre(); // Imprime: Mi nombre es: Lincy
 
-		const persona2 = new Persona('Lucía');
-		persona2.decirNombre();
+    const persona2 = new Persona('Lucía');
+    persona2.decirNombre(); // Imprime: Mi nombre es: Lucía
 
-		class Persona {
-		    constructor(nombre) {
-		        this.nombre = nombre;
-		    }
-		    decirNombre(){
-				console.log('Mi nombre es: ', this.nombre);
-		    }
-		}
+    // Forma moderna: clases (azúcar sintáctico sobre prototipos)
+    class Persona1 {
+        constructor(nombre) {
+            this.nombre = nombre; // Igual que antes, la propiedad se asigna a la instancia
+        }
+        decirNombre(){
+            console.log('Mi nombre es: ', this.nombre);
+        }
+    }
+    // Aunque parece una clase tradicional, internamente sigue usando prototipos.
+    // Los métodos definidos en la clase se añaden al prototipo de la clase.
 
-		const persona1 = new Persona('Lincy');
-		persona1.decirNombre();
+    const persona3 = new Persona1('Lincy');
+    persona1.decirNombre(); // Imprime: Mi nombre es: Lincy
 
-		const persona2 = new Persona('Lucía');
-		persona2.decirNombre();
-		
+    const persona4 = new Persona1('Lucía');
+    persona2.decirNombre(); // Imprime: Mi nombre es: Lucía
+
+    // Resumen:
+    // - Tanto la función constructora como la clase usan prototipos para compartir métodos entre instancias.
+    // - La forma de clase es azúcar sintáctico que facilita la escritura y lectura del código,
+    //   pero conceptualmente es similar a la función constructora con prototipos.
+
 	</script>
 
 </body>

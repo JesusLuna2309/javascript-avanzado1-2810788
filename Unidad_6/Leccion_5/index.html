@@ -1,40 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		function estrella (str) { return str + '⭐'; }
-		function feliz (str) { return str + '😄'; }
-		function triste (str) { return str + '😔'; }
-		function reir (str) {return str + '😂'}
-		function exclamacion (str) { return str + "!"; }
+        // Definimos funciones simples que transforman strings añadiéndoles emojis o caracteres
+        // Cada función recibe un string y devuelve un nuevo string modificado
+        function estrella (str) { return str + '⭐'; }  // Añade una estrella al final
+        function feliz (str) { return str + '😄'; }    // Añade un emoji feliz al final
+        function triste (str) { return str + '😔'; }    // Añade un emoji triste al final
+        function reir (str) {return str + '😂'}        // Añade un emoji de risa al final
+        function exclamacion (str) { return str + "!"; } // Añade un signo de exclamación al final
 
-		console.log(reir(exclamacion('Eso fué gracioso')));
+        // Ejemplo de composición manual: aplicamos primero exclamación y luego reir
+        // Esto se lee de adentro hacia afuera: primero se ejecuta exclamacion() y luego reir()
+        console.log(reir(exclamacion('Eso fué gracioso'))); // Output: "Eso fué gracioso!😂"
+        // El orden de las funciones importa: f(g(x)) ≠ g(f(x)) en general
 
-		function crearComposicion(f1, f2){
-			return function(texto){
-				return f1(f2(texto))
-			}
-		}
+        // COMPOSICIÓN DE FUNCIONES: ABSTRACCIÓN DEL PATRÓN
+        // Esta función de orden superior implementa el patrón de composición
+        // Recibe dos funciones y devuelve una nueva función que las aplica en secuencia
+        function crearComposicion(f1, f2){
+            // Devuelve una función que aplicará f1 después de f2 (de derecha a izquierda)
+            return function(texto){
+                // Primero se aplica f2 al texto, y luego f1 al resultado
+                return f1(f2(texto))
+                // Esto implementa la composición matemática: (f1 ∘ f2)(x) = f1(f2(x))
+            }
+        }
 
-		const muyFeliz = crearComposicion(feliz, estrella);
-		let frase1 = muyFeliz('Hoy es un buen día!');
+        // Creamos nuevas funciones mediante composición
+        // muyFeliz aplicará estrella y luego feliz al texto
+        const muyFeliz = crearComposicion(feliz, estrella);
+        let frase1 = muyFeliz('Hoy es un buen día!');
+        // Equivalente a: feliz(estrella('Hoy es un buen día!'))
+        // Resultado: 'Hoy es un buen día!⭐😄'
 
-		const muyTriste = crearComposicion(triste, exclamacion);
-		let frase2 = muyTriste('Lo siento');
+        // muyTriste aplicará exclamacion y luego triste al texto
+        const muyTriste = crearComposicion(triste, exclamacion);
+        let frase2 = muyTriste('Lo siento');
+        // Equivalente a: triste(exclamacion('Lo siento'))
+        // Resultado: 'Lo siento!😔'
 
-		const reirMucho = crearComposicion(feliz, estrella);
-		let frase3 = reirMucho('Hoy es un buen día!');
+        // NOTA: Hay un error en el código original. 
+        // reirMucho debería usar la función reir, no feliz
+        // Debería ser: const reirMucho = crearComposicion(reir, estrella);
+        const reirMucho = crearComposicion(feliz, estrella);
+        let frase3 = reirMucho('Hoy es un buen día!');
+        // Debido al error, esto es igual que muyFeliz
+        // Resultado: 'Hoy es un buen día!⭐😄'
 
-		console.log(frase1);
-		console.log(frase2);
-		console.log(frase3);
-		
-	</script>
+        // Mostramos los resultados
+        console.log(frase1); // Output: "Hoy es un buen día!⭐😄"
+        console.log(frase2); // Output: "Lo siento!😔"
+        console.log(frase3); // Output: "Hoy es un buen día!⭐😄" (igual a frase1 por el error)
+        
+        /* EXPLICACIÓN AVANZADA DE COMPOSICIÓN DE FUNCIONES:
+         *
+         * 1. Origen matemático: La composición de funciones viene del álgebra, donde (f ∘ g)(x) = f(g(x))
+         *
+         * 2. Asociatividad: La composición es asociativa, lo que significa que:
+         *    compose(f, compose(g, h)) = compose(compose(f, g), h)
+         *    Esto permite encadenar múltiples composiciones de manera flexible.
+         *
+         * 3. Composición de múltiples funciones: Se puede extender para componer más de dos funciones:
+         */
+
+        // Versión avanzada que permite componer múltiples funciones (no está en el código original)
+        /*
+        function compose(...fns) {
+            return function(x) {
+                // Aplicar las funciones de derecha a izquierda
+                return fns.reduceRight((valor, fn) => fn(valor), x);
+            };
+        }
+
+        // Ejemplo de uso:
+        const superExpresivo = compose(reir, feliz, estrella, exclamacion);
+        superExpresivo("Wow"); // "Wow!⭐😄😂"
+        */
+
+    </script>
 
 </body>
 </html>

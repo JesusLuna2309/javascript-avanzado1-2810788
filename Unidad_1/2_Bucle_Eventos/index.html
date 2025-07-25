@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<!-- HTML: Botón que dispara un evento al hacer clic -->
+<button id="miBoton">Haz clic</button>
+
+<script>
+  // Manejador de evento: función que se ejecuta cuando el usuario hace clic en el botón
+  function clickHandler() {
+    console.log("Clic en el botón");
+  }
+
+  // Asignamos el evento 'click' al botón con id 'miBoton'
+  document.getElementById("miBoton").addEventListener("click", clickHandler);
+
+  // Logs normales: se ejecutan de inmediato, en orden
+  console.log("Primer log");
+  console.log("Segundo log");
+
+  // Otro log inmediato
+  console.log("Primer log");
+
+  // setTimeout: programa una función para ejecutarse después de 0 ms.
+  // Aunque el tiempo es 0, la función se pone en la cola de tareas y se ejecuta después de que termine el código síncrono.
+  setTimeout(() => {
+    console.log("Segundo log");
+  }, 0);
+
+  // Log inmediato, antes del setTimeout
+  console.log("Tercer log");
+
+  // Función que simula una tarea larga y bloqueante
+  function tareaLarga() {
+    let ahora = Date.now();
+    while (Date.now() - ahora < 5000) {
+      // Este bucle bloquea el hilo principal durante 5 segundos
+      // Durante este tiempo, ningún evento (como clics) ni tareas programadas (como setTimeout) pueden ejecutarse
+    }
+    console.log("Fin de tarea larga");
+  }
+
+  // Redefinición del manejador de clic (sobrescribe el anterior)
+  function clickHandler() {
+    console.log("¡Clic recibido!");
+  }
+
+  // Vuelve a asignar el evento 'click' al botón, ahora con el nuevo manejador
+  document.getElementById("miBoton").addEventListener("click", clickHandler);
+
+  // Llamada a la tarea larga: bloquea el hilo principal
+  tareaLarga(); // 🔥 Esta función bloquea todo
+
+  // Mientras tareaLarga está ejecutándose, ningún evento ni setTimeout puede ejecutarse.
+  // Cuando termina, se procesan los eventos y tareas pendientes.
+
+</script>
+<body>
+    <h1>Eventos en JavaScript</h1>
+    <p>Haz clic en el botón para ver el evento en acción.</p>   
+</html>

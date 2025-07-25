@@ -1,58 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		//Recordemos que en Javascript las funciones son objetos de primera clase ya que ellas son objetos en si
+        // FUNCIONES DE ORDEN SUPERIOR (HIGHER-ORDER FUNCTIONS)
+        
+        // Recordemos que en Javascript las funciones son objetos de primera clase (first-class objects)
+        // Esto significa que pueden ser:
+        // - Asignadas a variables
+        // - Pasadas como argumentos a otras funciones
+        // - Retornadas por otras funciones
+        // - Almacenadas en estructuras de datos
 
-		const func = new function(){}
+        // Ejemplo de asignación de función a variable
+        const func = new function(){} // Crea un objeto función vacío
+        // Aunque esta sintaxis funciona, es inusual. Lo normal sería:
+        // const func = function() { /* código */ };
 
-		function miFunction(foo){
-			foo();
-		}
+        // Ejemplo de función que recibe otra función como argumento
+        function miFunction(foo){
+            foo(); // Llama a la función recibida
+        }
 
-		miFunction(func);
+        // Pasamos func como argumento a miFunction
+        miFunction(func);
+        // Nota: si func no tiene implementación, esta llamada no hará nada visible
 
-		/*
+        /*
+         * DEFINICIÓN DE FUNCIÓN DE ORDEN SUPERIOR
+         * 
+         * Una función de orden superior no es más que cualquier función que cumpla por lo menos una de las siguientes condiciones:
+         * 1. Recibe una función como argumento
+         * 2. Retorna una función
+         */
 
-		Una función de orden superior no es más que cualquier función que cumpla por lo menos una de las siguientes condiciones:
-		Recibe una función como argumento
-		Retorna una función
-		*/
+        // EJEMPLOS DE FUNCIONES DE ORDEN SUPERIOR EN JAVASCRIPT COTIDIANO:
 
-		Promise.resolve(5).then(val=>{
-			console.log(val);
-		});
+        // Ejemplo 1: Promise.then() - Recibe una función callback
+        Promise.resolve(5).then(val => {
+            console.log(val); // Output: 5
+        });
+        // .then() es una función de orden superior porque recibe una función como argumento
 
-		document.getElementById('boton').addEventListener('click', function(event){
-			console.log(event);
-		})
+        // Ejemplo 2: addEventListener - Recibe una función callback
+        document.getElementById('boton').addEventListener('click', function(event){
+            console.log(event);
+        })
+        // addEventListener es una función de orden superior porque recibe una función como argumento
 
-		setTimeout(function(){}, 0);
+        // Ejemplo 3: setTimeout - Recibe una función callback
+        setTimeout(function(){
+            // Código a ejecutar después del tiempo especificado
+        }, 0);
+        // setTimeout es una función de orden superior porque recibe una función como argumento
 
-		//aplicacion parcial:  is the act of applying some, but not all, of the arguments to a function and returning a new function awaiting the rest of the arguments
+        // APLICACIÓN PARCIAL DE FUNCIONES (CURRYING)
+        // La aplicación parcial consiste en aplicar algunos, pero no todos los argumentos a una función,
+        // devolviendo una nueva función que espera el resto de argumentos
 
-		function crearSaludo(saludo){
-			return function(nombre){
-				console.log(`${saludo} ${nombre}`);
-			}
-		}
+        // Ejemplo de aplicación parcial / currying
+        function crearSaludo(saludo){
+            // Esta función externa recibe el primer argumento (saludo)
+            return function(nombre){
+                // Esta función interna recibe el segundo argumento (nombre)
+                // y tiene acceso al argumento 'saludo' gracias al closure
+                console.log(`${saludo} ${nombre}`);
+            }
+        }
 
-		let saludoMannana = crearSaludo('Buenos días!');
-		saludoTemprano('Eleanor');
+        // Creamos funciones especializadas aplicando parcialmente los argumentos
+        let saludoMannana = crearSaludo('Buenos días!');
+        // saludoMannana es ahora una función que solo necesita el nombre
+        
+        // Hay un error en el código original: saludoTemprano no está definido, debería ser saludoMannana
+        saludoMannana('Eleanor'); // Output: "Buenos días! Eleanor"
 
-		let saludoTarde = crearSaludo('Buenos tardes!');
-		saludoTarde('Jorge');
-		saludoTarde('Lucía');
+        // Creamos otra función especializada con un saludo diferente
+        let saludoTarde = crearSaludo('Buenas tardes!');
+        // Podemos reutilizar esta función con diferentes nombres
+        saludoTarde('Jorge'); // Output: "Buenas tardes! Jorge"
+        saludoTarde('Lucía'); // Output: "Buenas tardes! Lucía"
 
+        /* BENEFICIOS DE LAS FUNCIONES DE ORDEN SUPERIOR:
+         *
+         * 1. Abstracción: Permiten extraer patrones comunes en operaciones
+         *
+         * 2. Composición: Facilitan combinar funciones simples para crear funciones complejas
+         *
+         * 3. Reutilización: Promueven código más DRY (Don't Repeat Yourself)
+         *
+         * 4. Legibilidad: A menudo hacen que el código sea más declarativo (qué hacer vs. cómo hacerlo)
+         */
 
+        // EJEMPLOS ADICIONALES DE FUNCIONES DE ORDEN SUPERIOR INCORPORADAS:
+        
+        // Array.map() - Recibe una función y la aplica a cada elemento
+        const numeros = [1, 2, 3, 4];
+        const duplicados = numeros.map(num => num * 2); // [2, 4, 6, 8]
+        
+        // Array.filter() - Recibe una función para filtrar elementos
+        const pares = numeros.filter(num => num % 2 === 0); // [2, 4]
+        
+        // Array.reduce() - Recibe una función para acumular valores
+        const suma = numeros.reduce((acumulador, actual) => acumulador + actual, 0); // 10
 
-
-	</script>
+    </script>
 
 </body>
 </html>

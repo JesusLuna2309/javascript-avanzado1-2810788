@@ -1,31 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		const primerProceso = new Promise((resolve, reject)=>{
-			setTimeout(resolve, 1000, 2);
-		});
+        // Creamos una promesa básica que se resolverá con el valor 2 después de 1 segundo
+        const primerProceso = new Promise((resolve, reject)=>{
+            setTimeout(resolve, 1000, 2);
+        });
 
-		async function llamarProceso(){
-			let valor = await primerProceso;
-			return valor * 2;
-		}
+        // Primera función asíncrona que espera a primerProceso y duplica su valor
+        async function llamarProceso(){
+            // await espera a que primerProceso se resuelva y extrae su valor (2)
+            let valor = await primerProceso;
+            // Duplicamos el valor: 2 * 2 = 4
+            return valor * 2;
+            // Al ser una función async, este return implícitamente envuelve el valor 4
+            // en una promesa: return Promise.resolve(4);
+        }
 
-		async function llamarFuncionAsincrona(){
-			let resultado = await llamarProceso();
-			return resultado * 2;
-		}
+        // Segunda función asíncrona que espera a llamarProceso y duplica su resultado
+        async function llamarFuncionAsincrona(){
+            // await espera a que llamarProceso() termine y extrae su valor (4)
+            let resultado = await llamarProceso();
+            // Duplicamos el valor: 4 * 2 = 8
+            return resultado * 2;
+            // Al ser una función async, este return implícitamente envuelve el valor 8
+            // en una promesa: return Promise.resolve(8);
+        }
 
-		llamarFuncionAsincrona().then(resultadoFinal=>{
-			console.log('Al final tenemos un valor de: '+resultadoFinal);
-		})
+        // Llamamos a la función asíncrona externa y manejamos su resultado con .then()
+        // ya que toda función async devuelve una promesa
+        llamarFuncionAsincrona().then(resultadoFinal=>{
+            // Este callback recibe el valor 8 cuando toda la cadena asíncrona termine
+            // Lo que ocurrirá aproximadamente 1 segundo después (el tiempo de primerProceso)
+            console.log('Al final tenemos un valor de: '+resultadoFinal); // Output: "Al final tenemos un valor de: 8"
+        });
 
-	</script>
+        /* Secuencia de ejecución:
+         * 1. Se crea la promesa primerProceso (que se resolverá en 1 segundo con valor 2)
+         * 2. Se llama a llamarFuncionAsincrona()
+         * 3. Dentro de llamarFuncionAsincrona(), se llama a llamarProceso()
+         * 4. Dentro de llamarProceso(), se espera a primerProceso (1 segundo)
+         * 5. Cuando primerProceso se resuelve con 2, llamarProceso() multiplica por 2 y devuelve 4
+         * 6. llamarFuncionAsincrona() recibe el 4, multiplica por 2 y devuelve 8
+         * 7. El .then() final recibe el 8 y lo muestra en consola
+         */
+
+    </script>
 
 </body>
 </html>

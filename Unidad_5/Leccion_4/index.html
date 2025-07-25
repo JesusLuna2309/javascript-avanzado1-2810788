@@ -1,33 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		const primerProceso = new Promise((resolve, reject)=>{
-				setTimeout(resolve, 3000, 'primer valor');
-			});
+        // Creamos una primera promesa que se resolverá después de 3 segundos
+        const primerProceso = new Promise((resolve, reject)=>{
+                // Esta es la promesa más lenta (3000ms)
+                setTimeout(resolve, 3000, 'primer valor');
+            });
 
-		const segundoProceso = new Promise((resolve, reject)=>{
-				setTimeout(resolve, 500, 'segundo valor');
-			});
+        // Creamos una segunda promesa que se resolverá después de 0.5 segundos
+        const segundoProceso = new Promise((resolve, reject)=>{
+                // Esta es la promesa más rápida (500ms)
+                setTimeout(resolve, 500, 'segundo valor');
+            });
 
-		const tercerProceso = new Promise((resolve, reject)=>{
-				setTimeout(resolve, 1000, 'tercer valor');
-			});
+        // Creamos una tercera promesa que se resolverá después de 1 segundo
+        const tercerProceso = new Promise((resolve, reject)=>{
+                // Esta promesa tiene una duración intermedia (1000ms)
+                setTimeout(resolve, 1000, 'tercer valor');
+            });
 
-		const listaPromesas = [primerProceso, segundoProceso, tercerProceso];
+        // Agrupamos todas las promesas en un array para la competición
+        const listaPromesas = [primerProceso, segundoProceso, tercerProceso];
 
-		Promise.race(listaPromesas).then(valor=>{
-			console.log(valor);
-		}, error=>{
-			console.log(error);
-		})
+        // Promise.race() toma un array de promesas y devuelve una nueva promesa
+        // Esta promesa se resuelve o rechaza tan pronto como UNA de las promesas
+        // del array se resuelva o rechace, ignorando el resultado de las demás
+        Promise.race(listaPromesas).then(valor=>{
+            // Este callback recibe el valor de la promesa que se completó primero
+            console.log(valor); // Output: 'segundo valor' (después de 500ms)
+            
+            // Importante: las otras promesas siguen ejecutándose, pero sus resultados
+            // son ignorados porque Promise.race() ya se completó
+        }, error=>{
+            // Este callback se ejecutaría si la primera promesa en completarse fuera rechazada
+            console.log(error);
+        });
 
-	</script>
+        // Comportamiento clave de Promise.race():
+        // 1. Se completa tan pronto como UNA promesa se resuelva o rechace (la más rápida gana)
+        // 2. Solo importa el resultado de la promesa más rápida, las demás son ignoradas
+        // 3. Las promesas más lentas siguen ejecutándose aunque su resultado ya no se use
+        // 4. Si el array está vacío, la promesa resultante nunca se resuelve
+
+        // Casos de uso comunes para Promise.race():
+        // 1. Implementar timeouts: competir una operación contra un temporizador
+        // 2. Intentar múltiples fuentes: usar el primer recurso que responda
+        // 3. Cancelación de operaciones largas: proporcionar una forma de salir temprano
+        // 4. Mejor de varios: elegir el resultado más rápido entre varias alternativas
+
+        // Ejemplo de timeout con Promise.race():
+        function fetchWithTimeout(url, ms) {
+            // Crea una promesa que se rechaza después de ms milisegundos
+            const timeout = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('Timeout')), ms);
+            });
+            
+            // Compite la operación fetch contra el timeout
+            return Promise.race([
+                fetch(url),
+                timeout
+            ]);
+        }
+        
+        // fetchWithTimeout('https://api.example.com/data', 5000)
+        //   .then(response => response.json())
+        //   .catch(error => console.error('Fetch failed:', error));
+
+    </script>
 
 </body>
 </html>

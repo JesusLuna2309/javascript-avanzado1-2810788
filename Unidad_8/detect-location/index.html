@@ -7,46 +7,124 @@
     <script>
 
       // Código debe ser ejecutado desde un servidor:
+      // Las APIs de geolocalización modernas generalmente requieren HTTPS por motivos de seguridad
       
-      function mostrarNombrePais(latitude,longitude){
+      /**
+       * Obtiene el nombre del país basado en coordenadas geográficas usando la API de Geocoding de Google
+       * @param {number} latitude - Latitud de la ubicación
+       * @param {number} longitude - Longitud de la ubicación
+       */
+      function mostrarNombrePais(latitude, longitude){
 
+        // URL para la API de Geocoding de Google
+        // NOTA: Falta la clave API (key=) que es necesaria para que funcione
+        // NOTA: Se está usando HTTP, debería ser HTTPS para entornos de producción
         var url = 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+latitude+','+longitude+'&sensor=true&key=';
 
+        // Realiza la petición fetch a la API de Google
         fetch(url, {
+          // PROBLEMA: this.getHeaders() no está definido en este contexto
+          // Parece que este código fue adaptado de otro lugar donde existía un método getHeaders()
           headers: this.getHeaders()
         })
-        .then((response)=>{
+        .then((response) => {
+          // Verifica si la respuesta HTTP fue exitosa
           if (!response.ok) {
             throw Error(response.statusText);
           }
           return response;
         })
-        .then(response =>{
+        .then(response => {
+          // Convierte la respuesta a formato JSON
           return response.json();
-        }).then(data =>{
+        }).then(data => {
+          // Extrae la dirección formateada del primer resultado
+          var address = data.results[0];
+          // Divide la dirección por comas y obtiene el último elemento (que suele ser el país)
+          let el = address.formatted_address.split(', ');
+          // Crea un elemento H1 para mostrar el país
+          let node = document.createElement('h1');
+          node.textContent = 'Tú estas en '+el[el.length - 1]
+          // Añade el elemento al body
+          document.body.appendChild(node);
+        })
+        .catch(error => {
+          // Maneja cualquier error que ocurra durante el proceso
+          console.log('Request falló', error);
+        }); 
+      };
+
+      /**
+       * Callback de éxito para la API de geolocalización
+       * IMPORTANTE: Hay varios errores en esta función:
+       * 1. Se redefine mostrarNombrePais (ya definida arriba)
+       * 2. El objeto position tiene estructura incorrecta (debería ser position.coords)
+       * 3. Llama a displayLocation que no está definida (debería llamar a mostrarNombrePais)
+       */
+      var mostrarNombrePais = function(position){
+        // ERROR: position.coordinadas no existe, debería ser position.coords
+        var x = position.coordinadas.latitude;
+        var y = position.coordinadas.longitude;
+        console.log(x, y);
+        // ERROR: displayLocation no está definida, debería ser mostrarNombrePais
+        displayLocation(x, y);
+      };
+
+      /**
+       * Callback de error para la API de geolocalización
+       * @param {GeolocationPositionError} error - Objeto de error de geolocalización
+       */
+      var errorCallback = function(error){
+        throw new Error('No es posible acceder a las coordenadas del usuario');
+      };
+
+      // Solicita la ubicación actual del usuario a través del navegador
+      // IMPORTANTE: Esta línea usa successCallback que no está definido
+      // Debería usar mostrarNombrePais como primer callback
+      navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+
+      /* CÓDIGO CORREGIDO:
+      
+      // Función para obtener y mostrar la ubicación
+      function mostrarNombrePais(latitude, longitude){
+        var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+latitude+','+longitude+'&sensor=true&key=TU_CLAVE_API';
+
+        fetch(url)
+        .then((response) => {
+          if (!response.ok) {
+            throw Error(response.statusText);
+          }
+          return response.json();
+        })
+        .then(data => {
           var address = data.results[0];
           let el = address.formatted_address.split(', ');
           let node = document.createElement('h1');
           node.textContent = 'Tú estas en '+el[el.length - 1]
           document.body.appendChild(node);
         })
-        .catch(error=>{
+        .catch(error => {
           console.log('Request falló', error);
         }); 
       };
 
-      var mostrarNombrePais = function(position){
-        var x = position.coordinadas.latitude;
-        var y = position.coordinadas.longitude;
+      // Callback de éxito para geolocalización
+      function successCallback(position){
+        var x = position.coords.latitude;
+        var y = position.coords.longitude;
         console.log(x, y);
-        displayLocation(x,y);
+        mostrarNombrePais(x, y);
       };
 
-      var errorCallback = function(error){
-        throw new Error('No es posible acceder a las coordenadas del usuario');
+      // Callback de error
+      function errorCallback(error){
+        console.error('Error de geolocalización:', error.message);
+        document.body.innerHTML = '<h1>No se pudo acceder a tu ubicación</h1>';
       };
 
-      navigator.geolocation.getCurrentPosition(successCallback,errorCallback);
+      // Solicitar ubicación
+      navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+      */
 
     </script>
   </body>

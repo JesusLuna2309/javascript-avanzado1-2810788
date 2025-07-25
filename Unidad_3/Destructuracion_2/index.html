@@ -1,60 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		//arrays:
+        //arrays:
 
-		const [primerElemento, ...resto] = ['a', 'b', 'c'];
-		console.log('Valor del primer elemento: ',primerElemento);
-		console.log('El resto del arreglo: ', resto);
-
-
-		const arr = [1,2,3,4];
-		const temp = [...arr, 5];
-		console.log(temp);
-
-		//funciones que retornan arreglos:
-
-		const [all, anno, mes, dia] = /^(\d\d\d\d)-(\d\d)-(\d\d)$/.exec('2019-10-31');
-		console.log(all, anno, mes, dia);
-
-		//Accesar valores en un Set o un Map:
-
-		var objetoSet = new Set().add(1).add(2);
-		const [x,y] = objetoSet;
-
-		console.log(x, y);
-
-		//
-
-		var objetoMap = new Map().set(11, 'primer valor').set(22, 'segundo valor');
-		const [i,j] = objetoMap;
-		console.log(i, j);
-
-		for (const [key, valor] of objetoMap) {
-		  console.log(key + ' es ' + valor);
-		}
-
-		//Como parámetros de una función
-
-		function nombreCompleto({nombre: x = 'Fulano', apellido: y = 'De tal'} = {}){
-			console.log(x + ' '+ y);
-		}
-
-		nombreCompleto({});
-
-		nombreCompleto({nombre: 'Natalia', apellido: 'Corea'});
-
-		nombreCompleto({nombre: 'Natalia'});
-		
+        // Destructuración básica de arrays + operador rest
+        const [primerElemento, ...resto] = ['a', 'b', 'c'];
+        // - primerElemento recibe el primer valor 'a'
+        // - ...resto recoge todos los elementos restantes ['b', 'c'] en un nuevo array
+        console.log('Valor del primer elemento: ',primerElemento); // Muestra: 'a'
+        console.log('El resto del arreglo: ', resto); // Muestra: ['b', 'c']
 
 
-	</script>
+        // Operador spread (...): expande un array en elementos individuales
+        const arr = [1,2,3,4];
+        const temp = [...arr, 5]; // Crea un nuevo array combinando los elementos de arr y el valor 5
+        // El operador spread "desempaqueta" los elementos de arr y los coloca en el nuevo array
+        console.log(temp); // Muestra: [1, 2, 3, 4, 5]
+
+        //funciones que retornan arreglos:
+
+        // Destructuración aplicada al resultado de una expresión regular
+        const [all, anno, mes, dia] = /^(\d\d\d\d)-(\d\d)-(\d\d)$/.exec('2019-10-31');
+        // El método exec() de una regex devuelve un array:
+        // - primer elemento: la coincidencia completa (all)
+        // - elementos siguientes: cada grupo capturado en los paréntesis de la regex
+        console.log(all, anno, mes, dia); // Muestra: '2019-10-31' '2019' '10' '31'
+
+        //Accesar valores en un Set o un Map:
+
+        // Destructuración con un objeto Set (colección de valores únicos)
+        var objetoSet = new Set().add(1).add(2);
+        // Set.prototype[Symbol.iterator] permite que un Set sea iterable
+        const [x,y] = objetoSet; // Extrae los valores del Set en orden de inserción
+        console.log(x, y); // Muestra: 1 2
+
+        //
+
+        // Destructuración con un objeto Map (colección de pares clave-valor)
+        var objetoMap = new Map().set(11, 'primer valor').set(22, 'segundo valor');
+        // Map.prototype[Symbol.iterator] devuelve pares [clave, valor]
+        const [i,j] = objetoMap; // Cada elemento extraído es un par [clave, valor]
+        console.log(i, j); // Muestra: [11, 'primer valor'] [22, 'segundo valor']
+
+        // Destructuración anidada en un bucle for...of con Map
+        for (const [key, valor] of objetoMap) {
+          // Destructura cada par [clave, valor] del Map directamente en el bucle
+          console.log(key + ' es ' + valor);
+          // Muestra: 
+          // 11 es primer valor
+          // 22 es segundo valor
+        }
+
+        //Como parámetros de una función
+
+        // Destructuración en parámetros de función con valores por defecto
+        function nombreCompleto({nombre: x = 'Fulano', apellido: y = 'De tal'} = {}){
+            // Parámetro: un objeto que se destructura inmediatamente
+            // nombre y apellido se renombran a x e y
+            // = {} permite llamar la función sin argumentos (evita error al destructurar undefined)
+            console.log(x + ' '+ y);
+        }
+
+        nombreCompleto({}); // Muestra: 'Fulano De tal'
+        // Se pasa un objeto vacío, así que se usan los valores por defecto
+
+        nombreCompleto({nombre: 'Natalia', apellido: 'Corea'}); // Muestra: 'Natalia Corea'
+        // Se usan los valores proporcionados
+
+        nombreCompleto({nombre: 'Natalia'}); // Muestra: 'Natalia De tal'
+        // Se usa el valor proporcionado para nombre y el valor por defecto para apellido
+
+    </script>
 
 </body>
 </html>

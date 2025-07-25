@@ -1,45 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		function* generadorSaludo(){
-			yield 'Hola!';
-			yield 'Como estás?'
-			yield 'Un gusto conocerte'
-		}
+        // Definición de una función generadora básica
+        // El asterisco (*) después de function indica que es un generador
+        function* generadorSaludo(){
+            // La palabra clave 'yield' pausa la ejecución y devuelve un valor
+            yield 'Hola!';           // Primera pausa/valor
+            yield 'Como estás?'      // Segunda pausa/valor
+            yield 'Un gusto conocerte' // Tercera pausa/valor
+            // Después del último yield, next() devolverá {value: undefined, done: true}
+        }
 
-		let saludo = generadorSaludo();
-		console.log(saludo.next().value);
-		console.log(saludo.next().value);
-		console.log(saludo.next().value);
+        // Creamos una instancia del generador
+        // Importante: la función no se ejecuta aún, solo se crea el objeto iterador
+        let saludo = generadorSaludo();
+        
+        // Llamamos a next() para avanzar en el generador
+        console.log(saludo.next().value); // 'Hola!'
+        // La ejecución se pausa después del primer yield
+        
+        console.log(saludo.next().value); // 'Como estás?'
+        // La ejecución continúa desde el segundo yield
+        
+        console.log(saludo.next().value); // 'Un gusto conocerte'
+        // La ejecución continúa desde el tercer yield
 
 
-		function* generador(iteraciones){
-     		while(iteraciones >= 0)
-        		yield --iteraciones;
-     	}
+        // Generador con parámetro y lógica interna (bucle)
+        function* generador(iteraciones){
+            // Este generador produce valores decrecientes desde (iteraciones-1) hasta -1
+             while(iteraciones >= 0)
+                // El operador -- es prefijo, disminuye antes de yield
+                yield --iteraciones; 
+                // Cada yield pausa la ejecución y mantiene el estado del bucle
+         }
 
-     	let iterador = generador(3);
+         // Creamos una instancia del generador con parámetro 3
+         let iterador = generador(3);
 
-     	console.log(iterador.next());
-     	console.log(iterador.next());
-     	console.log(iterador.next());
-     	console.log(iterador.next());
-     	console.log(iterador.next());
-     	console.log(iterador.next());
-     	console.log(iterador.next());
-     	console.log(iterador.next());
+        // next() devuelve un objeto con formato {value: X, done: boolean}
+         console.log(iterador.next()); // {value: 2, done: false}
+         console.log(iterador.next()); // {value: 1, done: false}
+         console.log(iterador.next()); // {value: 0, done: false}
+         console.log(iterador.next()); // {value: -1, done: false}
+         console.log(iterador.next()); // {value: undefined, done: true}
+        // Una vez que el generador termina, todas las llamadas subsiguientes 
+        // devuelven {value: undefined, done: true}
+         console.log(iterador.next()); // {value: undefined, done: true}
+         console.log(iterador.next()); // {value: undefined, done: true}
+         console.log(iterador.next()); // {value: undefined, done: true}
 
-     	for (const val of generador(2)) {
-		  console.log(val);
-		}
-		
-	</script>
+        // Los generadores son iterables, se pueden usar directamente con for...of
+         for (const val of generador(2)) {
+          console.log(val); // Imprime: 1, 0, -1
+          // El bucle for...of maneja automáticamente el objeto iterador
+          // y se detiene cuando done es true
+        }
+        
+    </script>
 
 </body>
 </html>

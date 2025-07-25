@@ -1,48 +1,74 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		//encadenamiento:
+        //encadenamiento:
 
-		//Promise.then retorna un objeto Promise
+        //Promise.then retorna un objeto Promise
+        // Cada método .then() devuelve una NUEVA promesa, lo que permite el encadenamiento
 
-		//throw new Error('un error ha sucedido :(')
+        //throw new Error('un error ha sucedido :(')
+        // Esta línea está comentada, pero si estuviera activa, lanzaría un error
+        // que sería capturado por el .catch() al final de la cadena
 
-		const promesa = new Promise((resolve, reject)=>{
-			setTimeout(resolve, 500, 5);
-		});
+        // Creamos una promesa que se resolverá con el valor 5 después de 500ms
+        const promesa = new Promise((resolve, reject) => {
+            // setTimeout ejecuta resolve(5) después de 500 milisegundos
+            // El tercer parámetro (5) es el valor que se pasa a resolve
+            setTimeout(resolve, 500, 5);
+        });
 
-		promesa.then(primerValor=>{
-			console.log('El primer valor es: ', primerValor);
-			return primerValor * primerValor
-		}).then(segundoValor=>{
-			console.log('El segundo valor es: ', segundoValor);
-			return segundoValor * segundoValor;
-		}).then(tercerValor=>{
-			console.log('El tercer valor es: ', tercerValor);
-		}).catch(error=>{
-			console.log(error);
-		})
+        // Iniciamos una cadena de promesas
+        promesa.then(primerValor => {
+            // Este callback recibe el valor resuelto de la promesa original (5)
+            console.log('El primer valor es: ', primerValor); // Imprime: "El primer valor es: 5"
+            return primerValor * primerValor; // Devuelve 25, que será el valor de la siguiente promesa
+        }).then(segundoValor => {
+            // Este callback recibe el valor retornado por el anterior .then() (25)
+            console.log('El segundo valor es: ', segundoValor); // Imprime: "El segundo valor es: 25"
+            return segundoValor * segundoValor; // Devuelve 625, que será el valor de la siguiente promesa
+        }).then(tercerValor => {
+            // Este callback recibe el valor retornado por el anterior .then() (625)
+            console.log('El tercer valor es: ', tercerValor); // Imprime: "El tercer valor es: 625"
+            // No hay return, implícitamente devuelve undefined
+        }).catch(error => {
+            // Este callback se ejecutaría si cualquiera de las promesas anteriores fuera rechazada
+            // o si se lanzara un error en alguno de los callbacks .then()
+            console.log(error);
+        });
 
 
-		/*promesa.then(primerValor=>{
-			console.log('El primer valor es: ', primerValor);
-			return promesa
-		}).then(segundoValor=>{
-			console.log('El segundo valor es: ', segundoValor);
-			return promesa
-		}).then(tercerValor=>{
-			console.log('El tercer valor es: ', tercerValor);
-		}).catch(error=>{
-			console.log(error);
-		})*/
+        /* Comentario sobre el código alternativo:
+        // Este código está comentado pero muestra otro patrón de encadenamiento
+        // que devuelve la misma promesa original en cada paso
+        
+        promesa.then(primerValor => {
+            console.log('El primer valor es: ', primerValor);
+            return promesa; // Devuelve la promesa ORIGINAL
+        }).then(segundoValor => {
+            console.log('El segundo valor es: ', segundoValor);
+            return promesa; // Devuelve la promesa ORIGINAL
+        }).then(tercerValor => {
+            console.log('El tercer valor es: ', tercerValor);
+        }).catch(error => {
+            console.log(error);
+        })
+        
+        // Este patrón causaría que todos los callbacks reciban el mismo valor (5)
+        // porque estamos devolviendo siempre la misma promesa original en lugar de
+        // transformar el valor en cada paso.
+        // Output sería:
+        // "El primer valor es: 5"
+        // "El segundo valor es: 5"
+        // "El tercer valor es: 5"
+        */
 
-	</script>
+    </script>
 
 </body>
 </html>

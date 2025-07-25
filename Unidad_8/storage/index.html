@@ -1,35 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		//Guardar datos
+        //Guardar datos
+        
+        // Almacena datos en localStorage - persistirán incluso después de cerrar el navegador
+        localStorage.setItem('nombre', 'Natalia Corea');
+        // Almacena datos en sessionStorage - solo persistirán durante la sesión actual
+        sessionStorage.setItem('ciudad', 'Dublín');
 
-		localStorage.setItem('nombre', 'Natalia Corea');
-		sessionStorage.setItem('ciudad', 'Dublín');
+        //Recuperar datos
+        
+        // Recupera el valor almacenado en localStorage usando la clave 'nombre'
+        let nombre = localStorage.getItem('nombre');
+        // Recupera el valor almacenado en sessionStorage usando la clave 'ciudad'
+        // NOTA: Hay un error tipográfico: variable 'cuidad' en lugar de 'ciudad'
+        let cuidad = sessionStorage.getItem('ciudad');
 
-		//Recuperar datos
+        // Muestra los valores recuperados en la consola mediante template literals
+        console.log(`${nombre} vive en ${cuidad}`);
+        // Output: "Natalia Corea vive en Dublín"
 
-		let nombre = localStorage.getItem('nombre');
-		let cuidad = sessionStorage.getItem('ciudad');
+        //Eliminar datos
+        
+        // Elimina un elemento específico de localStorage usando su clave
+        localStorage.removeItem('nombre');
+        // Elimina un elemento específico de sessionStorage usando su clave
+        sessionStorage.removeItem('ciudad');
 
-		console.log(`${nombre} vive en ${cuidad}`);
+        // Elimina TODOS los elementos almacenados en localStorage
+        localStorage.clear();
+        // Elimina TODOS los elementos almacenados en sessionStorage
+        sessionStorage.clear();
 
-		//Eliminar datos
+        // Intenta recuperar un valor que ya ha sido eliminado
+        let nombreOtravez = localStorage.getItem('nombre');
+        // Muestra el resultado en consola (será null porque el ítem fue eliminado)
+        console.log(`Ahora nombre es ${nombreOtravez}`);
+        // Output: "Ahora nombre es null"
 
-		localStorage.removeItem('nombre');
-		sessionStorage.removeItem('ciudad');
-
-		localStorage.clear();
-		sessionStorage.clear();
-
-		let nombreOtravez = localStorage.getItem('nombre');
-		console.log(`Ahora nombre es ${nombreOtravez}`);
-
-
-	</script>
+    </script>
 </body>
 </html>

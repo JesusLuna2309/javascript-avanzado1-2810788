@@ -1,52 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		const target = {
-			titulo: "Fundación", 
-			autor: "Issac Asimov", 
-			genero: "Ciencia Ficción", 
-			numeroPaginas: 255
-		};
+        // Objeto objetivo (target) con datos de un libro
+        const target = {
+            titulo: "Fundación", 
+            autor: "Issac Asimov", 
+            genero: "Ciencia Ficción", 
+            numeroPaginas: 255
+        };
 
-		const handler = {
-			get: function(target, prop, proxy) {
-			    if (prop === 'numeroPaginas') {
-			      return `Tengo ${target[prop]} páginas!`;
-			    } else {
-			      return prop;
-			    }
-			  },
-			  set(target, prop, value) {
-			    if (prop === 'titulo' || prop == 'autor') {
-			      console.log(`No puedes modificar la propiedad ${prop}`);
-			    } else {
-			      target[prop] = value;
-			    }
-			 },
-			 deleteProperty(target, prop) {
-			 	throw Error('No está permitido eliminar propiedades de este objeto!')
-			 	return;
-			 }
-		}
+        // Manejador (handler) con trampas para controlar el acceso al objeto
+        const handler = {
+            // Trampa 'get': intercepta lecturas de propiedades
+            get: function(target, prop, proxy) {
+                if (prop === 'numeroPaginas') {
+                    // Formatea el número de páginas como una frase
+                    return `Tengo ${target[prop]} páginas!`;
+                } else {
+                    // Para otras propiedades, devuelve el nombre de la propiedad (no su valor)
+                    return prop;
+                }
+            },
+            
+            // Trampa 'set': intercepta asignaciones a propiedades
+            set(target, prop, value) {
+                if (prop === 'titulo' || prop == 'autor') {
+                    // Impide modificar 'titulo' y 'autor'
+                    console.log(`No puedes modificar la propiedad ${prop}`);
+                } else {
+                    // Permite modificar otras propiedades
+                    target[prop] = value;
+                }
+                // Nota: Debería devolver true para indicar éxito según la especificación
+                return true;
+            },
+            
+            // Trampa 'deleteProperty': intercepta eliminaciones de propiedades
+            deleteProperty(target, prop) {
+                // Impide eliminar cualquier propiedad
+                throw Error('No está permitido eliminar propiedades de este objeto!')
+                return; // Esta línea nunca se ejecuta
+            }
+        }
 
-		const {proxy:miProxy, revoke} = Proxy.revocable(target, handler);
+        // Creamos un proxy revocable usando Proxy.revocable()
+        // Esto devuelve un objeto con dos propiedades:
+        // - proxy: el objeto proxy que podemos usar
+        // - revoke: una función que desactiva permanentemente el proxy
+        const {proxy: miProxy, revoke} = Proxy.revocable(target, handler);
 
-		console.log(miProxy.titulo);
-		console.log(miProxy.numeroPaginas);
+        // Usamos el proxy normalmente
+        console.log(miProxy.titulo); // Output: "titulo" (por nuestra trampa 'get')
+        console.log(miProxy.numeroPaginas); // Output: "Tengo 255 páginas!"
 
-		revoke();
+        // REVOCAMOS EL PROXY
+        // Esto invalida el proxy permanentemente, cualquier acceso posterior lanzará un error
+        revoke();
 
-		miProxy.titulo = 'Un título nuevo';
-
-		
-		
-	</script>
+        // Intentamos usar el proxy después de revocarlo
+        // Esto lanzará un TypeError: Cannot perform 'get' on a proxy that has been revoked
+        try {
+            miProxy.titulo = 'Un título nuevo';
+        } catch (error) {
+            console.error("Error al usar el proxy revocado:", error.message);
+        }
+        
+        /*
+         * Casos de uso para proxies revocables:
+         * 
+         * 1. Control de acceso temporal: dar acceso a un objeto solo durante un tiempo limitado
+         * 2. Seguridad: revocar acceso a datos sensibles cuando ya no son necesarios
+         * 3. Liberación de recursos: eliminar referencias a objetos grandes para ayudar al garbage collector
+         * 4. Gestión de sesiones: invalidar tokens o credenciales expiradas
+         * 5. APIs con permisos temporales: revocar permisos después de completar una operación
+         */
+        
+    </script>
 
 </body>
 </html>

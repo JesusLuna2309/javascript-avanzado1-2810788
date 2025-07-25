@@ -1,30 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		function listarCookies(){
-			return document.cookie.split('; ')
-			.map(cookie=>cookie.split('='));
-		}
+        /**
+         * Función para listar todas las cookies existentes
+         * @returns {Array} Array de arrays, donde cada subarray contiene [nombre, valor] de una cookie
+         */
+        function listarCookies(){
+            // document.cookie devuelve todas las cookies como un único string
+            // con formato "nombre1=valor1; nombre2=valor2; ..."
+            return document.cookie.split('; ')
+            // Dividimos por "; " para obtener cada cookie individual
+            .map(cookie=>cookie.split('='));
+            // Para cada cookie, dividimos por "=" para separar nombre y valor
+            // Resultado: [["nombre1", "valor1"], ["nombre2", "valor2"], ...]
+        }
 
-		function buscarCookie(key){
-			
-			listarCookies().filter(par=> par[0] == key);
-		}
+        /**
+         * Función para buscar una cookie específica por su nombre
+         * @param {string} key - Nombre de la cookie a buscar
+         * @returns {Array} Array con los pares [nombre, valor] que coinciden con la clave
+         * 
+         * NOTA: Hay un error en esta función - falta la sentencia return
+         */
+        function buscarCookie(key){
+            // CORRECCIÓN: Falta return en esta línea
+            return listarCookies().filter(par=> par[0] == key);
+            // Filtra el array devuelto por listarCookies() para encontrar coincidencias
+        }
 
-		document.cookie = `temp=abc; expires=Sun, 01 Dec 2019 12:00:00 UTC; path=/`;
+        // Creamos una cookie con fecha de expiración fija (pasada)
+        // Esta cookie ya está expirada (1 Dic 2019), por lo que el navegador la eliminará inmediatamente
+        document.cookie = `temp=abc; expires=Sun, 01 Dec 2019 12:00:00 UTC; path=/`;
+        // - temp=abc: nombre=valor de la cookie
+        // - expires=...: fecha de expiración (formato UTC)
+        // - path=/: la cookie es válida para todo el sitio
 
-		let fechaExpiracion = new Date();
-		fechaExpiracion.setTime(fechaExpiracion.getTime() + (20*24*60*60*1000));
+        // Calculamos una fecha de expiración dinámica (20 días desde ahora)
+        let fechaExpiracion = new Date();
+        // Obtenemos el tiempo actual en milisegundos y añadimos 20 días
+        // 20 días * 24 horas * 60 minutos * 60 segundos * 1000 milisegundos
+        fechaExpiracion.setTime(fechaExpiracion.getTime() + (20*24*60*60*1000));
 
-		document.cookie = `temp=abc; expires=${fechaExpiracion.toUTCString()}; path=/`;
+        // Creamos/actualizamos la misma cookie pero con nueva fecha de expiración
+        document.cookie = `temp=abc; expires=${fechaExpiracion.toUTCString()}; path=/`;
+        // Esta cookie sobrescribirá la anterior (mismo nombre) y tendrá validez de 20 días
 
-	</script>
+        /*
+         * CORRECCIONES Y MEJORAS SUGERIDAS:
+         *
+         * 1. Añadir return a la función buscarCookie:
+         *    function buscarCookie(key){
+         *        return listarCookies().filter(par=> par[0] == key);
+         *    }
+         *
+         * 2. Mejorar buscarCookie para devolver solo el valor:
+         *    function buscarCookie(key){
+         *        const resultado = listarCookies().filter(par=> par[0] == key);
+         *        return resultado.length > 0 ? resultado[0][1] : null;
+         *    }
+         *
+         * 3. Añadir una función para crear cookies más fácilmente:
+         *    function crearCookie(nombre, valor, diasExpiracion = 30) {
+         *        let fecha = new Date();
+         *        fecha.setTime(fecha.getTime() + (diasExpiracion*24*60*60*1000));
+         *        document.cookie = `${nombre}=${valor}; expires=${fecha.toUTCString()}; path=/`;
+         *    }
+         *
+         * 4. Añadir una función para eliminar cookies:
+         *    function eliminarCookie(nombre) {
+         *        document.cookie = `${nombre}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+         *    }
+         */
+    </script>
 
 </body>
 </html>

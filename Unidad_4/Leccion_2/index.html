@@ -1,52 +1,84 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		const target = {
-			titulo: "Fundación", 
-			autor: "Issac Asimov", 
-			genero: "Ciencia Ficción", 
-			numeroPaginas: 255
-		};
+        // Objeto objetivo (target) que será envuelto por el proxy
+        const target = {
+            titulo: "Fundación", 
+            autor: "Issac Asimov", 
+            genero: "Ciencia Ficción", 
+            numeroPaginas: 255
+        };
 
-		const handler = {
-			get: function(target, prop, proxy) {
-			    if (prop === 'numeroPaginas') {
-			      return `Tengo ${target[prop]} páginas!`;
-			    } else {
-			      return prop;
-			    }
-			  },
-			  set(target, prop, value) {
-			    if (prop === 'titulo' || prop == 'autor') {
-			      console.log(`No puedes modificar la propiedad ${prop}`);
-			    } else {
-			      target[prop] = value;
-			    }
-			 },
-			 deleteProperty(target, prop) {
-			 	throw Error('No está permitido eliminar propiedades de este objeto!')
-			 	return;
-			 }
-		}
+        // Manejador (handler) con múltiples trampas para diferentes operaciones
+        const handler = {
+            // Trampa 'get': intercepta lecturas de propiedades (obj.prop o obj['prop'])
+            get: function(target, prop, proxy) {
+                // target: el objeto original
+                // prop: nombre de la propiedad a la que se accede
+                // proxy: el objeto proxy mismo (raramente usado)
+                
+                if (prop === 'numeroPaginas') {
+                    // Modifica el comportamiento para 'numeroPaginas'
+                    return `Tengo ${target[prop]} páginas!`;
+                } else {
+                    // Para cualquier otra propiedad, devuelve su nombre en lugar de su valor
+                    // Esto es un comportamiento inusual en un proxy real, normalmente se devolvería target[prop]
+                    return prop;
+                }
+            },
+            
+            // Trampa 'set': intercepta asignaciones a propiedades (obj.prop = valor)
+            set(target, prop, value) {
+                // target: el objeto original
+                // prop: nombre de la propiedad a asignar
+                // value: nuevo valor para la propiedad
+                
+                if (prop === 'titulo' || prop == 'autor') {
+                    // Impide cambiar las propiedades 'titulo' y 'autor'
+                    console.log(`No puedes modificar la propiedad ${prop}`);
+                    // No se realiza ningún cambio en el objeto target
+                    return true; // Debe devolver true para indicar éxito según la especificación
+                } else {
+                    // Para otras propiedades, permite la asignación
+                    target[prop] = value;
+                    return true; // Operación exitosa
+                }
+            },
+            
+            // Trampa 'deleteProperty': intercepta operaciones de eliminación (delete obj.prop)
+            deleteProperty(target, prop) {
+                // target: el objeto original
+                // prop: nombre de la propiedad a eliminar
+                
+                // Impide eliminar cualquier propiedad lanzando un error
+                throw Error('No está permitido eliminar propiedades de este objeto!')
+                return; // Esta línea nunca se ejecuta debido al throw anterior
+            }
+        }
 
-		const miProxy = new Proxy(target, handler);
+        // Creamos el proxy con el objeto target y el handler definido
+        const miProxy = new Proxy(target, handler);
 
-		console.log(miProxy.titulo);
-		console.log(miProxy.numeroPaginas);
+        // Prueba 1: Acceso a propiedades (trampa 'get')
+        console.log(miProxy.titulo); // Output: "titulo" (no "Fundación", por nuestro handler)
+        console.log(miProxy.numeroPaginas); // Output: "Tengo 255 páginas!"
 
-		miProxy.titulo = 'Un título nuevo';
-		miProxy.numeroPaginas = 500;
-		console.log(miProxy.numeroPaginas);
+        // Prueba 2: Modificación de propiedades (trampa 'set')
+        miProxy.titulo = 'Un título nuevo'; // Output: "No puedes modificar la propiedad titulo"
+        miProxy.numeroPaginas = 500; // Esta modificación sí se permite
+        console.log(miProxy.numeroPaginas); // Output: "Tengo 500 páginas!"
 
-		
-		
-	</script>
+        // Prueba 3: Eliminación de propiedades (trampa 'deleteProperty')
+        // Descomenta la siguiente línea para ver el error:
+        // delete miProxy.titulo; // Error: No está permitido eliminar propiedades de este objeto!
+        
+    </script>
 
 </body>
 </html>

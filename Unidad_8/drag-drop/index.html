@@ -1,75 +1,105 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
-	<style type="text/css">
+    <title></title>
+    <style type="text/css">
+        /* Estilo para las zonas destino donde se puede soltar el elemento */
+        .target{
+            width: 100px;
+          	height: 100px;
+          	padding: 10px;
+          	border: 2px solid #424242;
+          	border-radius: 5px;
+          	display: inline-block;
+        }
 
-		.target{
-			width: 100px;
-		  	height: 100px;
-		  	padding: 10px;
-		  	border: 2px solid #424242;
-		  	border-radius: 5px;
-		  	display: inline-block;
-		}
+        /* Estilo para el elemento que se puede arrastrar */
+        #el-draggable{
+            width: 100px;
+            height: 100px;
+            background-color: #6D4C41; /* Color marrón */
+        }
 
-		#el-draggable{
-			width: 100px;
-			height: 100px;
-			background-color: #6D4C41;
-		}
-
-		span{
-			color: #FFFFFF;
-			font-weight: bold;
-			padding: 5px;
-			font-family: Arial;
-		}
-
-	</style>
+        /* Estilo para el texto dentro de los elementos */
+        span{
+            color: #FFFFFF; /* Texto blanco */
+            font-weight: bold;
+            padding: 5px;
+            font-family: Arial;
+        }
+    </style>
 </head>
 <body>
+    <!-- Contenedores destino donde se puede soltar el elemento arrastrable -->
+    <div class="target"></div>
+    <div class="target"></div>
+    <div class="target"></div>
+    <div class="target"></div>
+    <br>
 
-<div class="target"></div>
-<div class="target"></div>
-<div class="target"></div>
-<div class="target"></div>
-<br>
+    <!-- Elemento arrastrable - El atributo draggable="true" es esencial -->
+    <div id="el-draggable" draggable="true"></div>
 
-<div id="el-draggable" draggable="true"></div>
+    <script type="text/javascript">
+        // Obtenemos referencias a los elementos del DOM
+        const targets = document.getElementsByClassName("target"); // HTMLCollection con todos los contenedores destino
+        document.getElementById("el-draggable").addEventListener('dragstart', empiezaArrastre); 
 
-<script type="text/javascript">
+        // Iteramos por todos los contenedores destino para añadirles event listeners
+        for (var i=0, j = targets.length; i<j; i++) {
+            // dragover: se dispara continuamente mientras un elemento arrastrable está sobre el destino
+            targets[i].addEventListener('dragover', permiteColocacion);
+            // dragleave: se dispara cuando un elemento arrastrable sale del destino
+            targets[i].addEventListener('dragleave', removerColor);
+            // drop: se dispara cuando se suelta un elemento arrastrable en el destino
+            targets[i].addEventListener('drop', colocacion);
+        }
 
-	const targets = document.getElementsByClassName("target"); //HTMLCollection
-	document.getElementById("el-draggable").addEventListener('dragstart', empiezaArrastre); 
+        /**
+         * Maneja el evento dragleave (cuando el cursor sale de un contenedor destino)
+         * Restaura el color de fondo original del contenedor
+         * @param {DragEvent} event - El evento de arrastre
+         */
+        function removerColor(event){
+            console.log(event);
+            event.currentTarget.style.background = "#FFFFFF"; // Vuelve a color blanco
+        }
+        
+        /**
+         * Maneja el evento dragover (cuando el cursor está sobre un contenedor destino)
+         * Cambia el color de fondo para dar feedback visual y permite la colocación
+         * @param {DragEvent} event - El evento de arrastre
+         */
+        function permiteColocacion(event) {
+            event.currentTarget.style.background = "#FFF9C4"; // Cambia a color amarillo claro
+            event.preventDefault(); // Crucial: por defecto, los navegadores no permiten soltar elementos
+        }
 
-	for (var i=0, j = targets.length; i<j; i++) {
-	  	targets[i].addEventListener('dragover', permiteColocacion);
-	  	targets[i].addEventListener('dragleave', removerColor);
-		targets[i].addEventListener('drop', colocacion);
-	}
+        /**
+         * Maneja el evento dragstart (cuando comienza el arrastre)
+         * Almacena el ID del elemento que se está arrastrando en el objeto dataTransfer
+         * @param {DragEvent} event - El evento de arrastre
+         */
+        function empiezaArrastre(event) {
+            // Guarda el ID del elemento arrastrado en el "portapapeles" del evento
+            // Esto es necesario para saber qué elemento mover cuando ocurra el drop
+            event.dataTransfer.setData("text", event.target.id);
+        }
 
-	function removerColor(event){
-		console.log(event)
-		event.currentTarget.style.background = "#FFFFFF";
-	}
-	
-	function permiteColocacion(event) {
-		event.currentTarget.style.background = "#FFF9C4";
-		event.preventDefault();
-	}
-
-	function empiezaArrastre(event) {
-		event.dataTransfer.setData("text", event.target.id);
-	}
-
-	function colocacion(event) {
-		event.preventDefault();
-		var data = event.dataTransfer.getData("text");
-		event.target.appendChild(document.getElementById(data));
-	}
-
-	</script>
-
+        /**
+         * Maneja el evento drop (cuando se suelta el elemento en un contenedor destino)
+         * Mueve el elemento arrastrado al contenedor donde se soltó
+         * @param {DragEvent} event - El evento de arrastre
+         */
+        function colocacion(event) {
+            event.preventDefault(); // Evita comportamiento predeterminado del navegador
+            var data = event.dataTransfer.getData("text"); // Recupera el ID guardado durante dragstart
+            // Encuentra el elemento con ese ID y lo añade como hijo del contenedor destino
+            event.target.appendChild(document.getElementById(data));
+            // NOTA: Hay un posible error aquí. Si hay elementos anidados en el target,
+            // event.target podría no ser el contenedor .target, sino un elemento hijo.
+            // Sería más seguro usar event.currentTarget
+        }
+    </script>
 </body>
 </html>

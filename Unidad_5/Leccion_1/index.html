@@ -1,40 +1,102 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		/*fetch('algún destino remoto').then(respuesta=>{
-			if (respuesta.ok) {
-				console.log('todo salió bien');
-			}else{
-				throw Error(respuesta.statusText);
-			}
-		});*/
+        /*fetch('algún destino remoto').then(respuesta=>{
+            if (respuesta.ok) {
+                console.log('todo salió bien');
+            }else{
+                throw Error(respuesta.statusText);
+            }
+        });*/
 
-		const promesa = new Promise((resolve, reject)=>{
-			
-			let allOk = false;
+        // Creación de una nueva promesa
+        // Una promesa es un objeto que representa un valor que puede estar disponible ahora, en el futuro, o nunca
+        const promesa = new Promise((resolve, reject)=>{
+            // El constructor de Promise recibe una función ejecutora con dos parámetros:
+            // - resolve: función para indicar que la promesa se cumplió exitosamente
+            // - reject: función para indicar que la promesa falló
+            
+            // Variable que simula el resultado de una operación asíncrona
+            let allOk = false;
 
-			if(allOk){
-				resolve('todo salió bien')
-			}else{
-				reject(new Error('hubo algún error'));
-			}
-		});
+            // Simulación de lógica condicional para resolver o rechazar la promesa
+            if(allOk){
+                // Si todo está bien, resolvemos la promesa con un mensaje de éxito
+                // Esto cambia el estado de la promesa a "fulfilled" (cumplida)
+                resolve('todo salió bien');
+            }else{
+                // Si algo salió mal, rechazamos la promesa con un objeto Error
+                // Esto cambia el estado de la promesa a "rejected" (rechazada)
+                reject(new Error('hubo algún error'));
+            }
+            
+            // Nota: Una promesa solo puede ser resuelta o rechazada una vez
+            // Llamadas adicionales a resolve() o reject() no tienen efecto
+        });
 
-		promesa.then(valor=>{
-			console.log(valor);
-		}, error=>{
-			console.log(error);
-		});
-		
+        // Manejo del resultado de la promesa
+        promesa.then(
+            // Primer callback: se ejecuta cuando la promesa es resuelta (cumplida)
+            valor => {
+                console.log(valor); // Imprime: 'todo salió bien' (si allOk es true)
+            }, 
+            // Segundo callback: se ejecuta cuando la promesa es rechazada
+            error => {
+                console.log(error); // Imprime: Error: hubo algún error (si allOk es false)
+            }
+        );
+        
+        // Forma alternativa usando .then() y .catch() por separado
+        // Esto es más común y más legible para manejar promesas
+        /*
+        promesa
+            .then(valor => {
+                console.log(valor); // Se ejecuta solo en caso de éxito
+            })
+            .catch(error => {
+                console.log(error); // Se ejecuta solo en caso de error
+            });
+        */
+        
+        // Métodos estáticos útiles de Promise:
+        
+        // Promise.resolve() - Crea una promesa ya resuelta
+        const promesaResuelta = Promise.resolve('valor inmediato');
+        
+        // Promise.reject() - Crea una promesa ya rechazada
+        const promesaRechazada = Promise.reject(new Error('error inmediato'));
+        
+        // Promise.all() - Espera a que todas las promesas se resuelvan
+        // Si alguna falla, la promesa resultante falla inmediatamente
+        /*
+        Promise.all([promesa1, promesa2, promesa3])
+            .then(resultados => {
+                // resultados es un array con los valores de todas las promesas
+            })
+            .catch(error => {
+                // Se ejecuta si cualquiera de las promesas falla
+            });
+        */
+        
+        // Promise.race() - Se resuelve o rechaza tan pronto como
+        // cualquiera de las promesas del array se resuelva o rechace
+        /*
+        Promise.race([promesa1, promesa2, promesa3])
+            .then(primerResultado => {
+                // primerResultado es el valor de la primera promesa en completarse
+            })
+            .catch(error => {
+                // Se ejecuta si la primera promesa en completarse falla
+            });
+        */
 
-
-	</script>
+    </script>
 
 </body>
 </html>

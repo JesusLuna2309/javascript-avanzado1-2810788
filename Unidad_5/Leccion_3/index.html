@@ -1,33 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		const primerProceso = new Promise((resolve, reject)=>{
-				setTimeout(resolve, 3000, 'primer valor');
-			});
+        // Creamos una primera promesa que se resolverá después de 3 segundos
+        const primerProceso = new Promise((resolve, reject)=>{
+                // setTimeout simula una operación asíncrona de larga duración (3000ms)
+                setTimeout(resolve, 3000, 'primer valor');
+            });
 
-		const segundoProceso = new Promise((resolve, reject)=>{
-				setTimeout(resolve, 500, 'segundo valor');
-			});
+        // Creamos una segunda promesa que se resolverá después de 0.5 segundos
+        const segundoProceso = new Promise((resolve, reject)=>{
+                // Esta promesa se resolverá mucho más rápido (500ms)
+                setTimeout(resolve, 500, 'segundo valor');
+            });
 
-		const tercerProceso = new Promise((resolve, reject)=>{
-				setTimeout(resolve, 1000, 'tercer valor');
-			});
+        // Creamos una tercera promesa que se resolverá después de 1 segundo
+        const tercerProceso = new Promise((resolve, reject)=>{
+                // Esta promesa tiene una duración intermedia (1000ms)
+                setTimeout(resolve, 1000, 'tercer valor');
+            });
 
-		const listaPromesas = [primerProceso, segundoProceso, tercerProceso];
+        // Agrupamos todas las promesas en un array para procesarlas juntas
+        const listaPromesas = [primerProceso, segundoProceso, tercerProceso];
 
-		Promise.all(listaPromesas).then(valores=>{
-			console.log(valores);
-		}, error=>{
-			console.log(error);
-		})
+        // Promise.all() toma un array de promesas y devuelve una nueva promesa
+        // Esta promesa se resuelve cuando TODAS las promesas del array se han resuelto
+        // O se rechaza inmediatamente si CUALQUIERA de las promesas es rechazada
+        Promise.all(listaPromesas).then(valores=>{
+            // valores es un array que contiene los resultados de todas las promesas
+            // en el mismo orden que se especificaron, independientemente de cuándo se resolvieron
+            console.log(valores); // Output: ['primer valor', 'segundo valor', 'tercer valor']
+            // Nota: Este console.log se ejecutará después de 3 segundos,
+            // porque tenemos que esperar a que la promesa más lenta (primerProceso) termine
+        }, error=>{
+            // Este callback se ejecutaría si cualquiera de las promesas fuera rechazada
+            console.log(error);
+        })
 
-	</script>
+        // Comportamiento clave de Promise.all():
+        // 1. Espera a que TODAS las promesas se completen (patrón de barrera)
+        // 2. Preserva el ORDEN de los resultados (mismo orden que el array de entrada)
+        // 3. Falla rápido: si una promesa falla, Promise.all() falla inmediatamente
+        //    sin esperar a que las demás terminen
+
+        // Otros métodos similares pero con comportamiento diferente:
+        // - Promise.allSettled(): espera a que TODAS terminen (resueltas o rechazadas)
+        // - Promise.race(): se resuelve o rechaza tan pronto como UNA promesa se complete
+        // - Promise.any(): se resuelve cuando UNA promesa se resuelve, o rechaza si TODAS fallan
+
+    </script>
 
 </body>
 </html>

@@ -1,71 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		const target = {
-			
-			render(val, tag){
-				
-				let htmlTag = document.getElementsByTagName(tag)[0];
-				
-				if(!htmlTag){
-					htmlTag = document.createElement(tag);
-					document.body.appendChild(htmlTag);
-				}
+        // CASO DE USO 1: BINDING REACTIVO DE DATOS AL DOM
+        // Objeto con método render para actualizar elementos del DOM
+        const target = {
+            // Método para renderizar un valor en un elemento HTML específico
+            render(val, tag){
+                // Busca si ya existe una etiqueta del tipo especificado
+                let htmlTag = document.getElementsByTagName(tag)[0];
+                
+                // Si no existe, crea un nuevo elemento y lo añade al body
+                if(!htmlTag){
+                    htmlTag = document.createElement(tag);
+                    document.body.appendChild(htmlTag);
+                }
 
-				htmlTag.textContent = val;
-			}
-		};
+                // Actualiza el contenido del elemento con el valor proporcionado
+                htmlTag.textContent = val;
+            }
+        };
 
-		const handler = {
-			set(target, prop, value) {
-				
-				target[prop] = value;
-				
-				target.render(value, prop == 'titulo'? 'h1' : 'p');
-			 }
-		}
+        // Handler que implementa un binding reactivo
+        const handler = {
+            // La trampa 'set' se activa cuando se asigna un valor a una propiedad
+            set(target, prop, value) {
+                // Almacena el valor en el objeto target
+                target[prop] = value;
+                
+                // Renderiza automáticamente el valor en el DOM
+                // Si la propiedad es 'titulo', usa un <h1>, de lo contrario usa un <p>
+                target.render(value, prop == 'titulo'? 'h1' : 'p');
+                return true; // Indica éxito
+            }
+        }
 
-		const miProxy = new Proxy(target, handler);
-		miProxy.titulo = 'Robots del Amanecer';
+        // Crea el proxy con binding reactivo
+        const miProxy = new Proxy(target, handler);
+        
+        // Al asignar un valor, automáticamente se actualiza el DOM
+        miProxy.titulo = 'Robots del Amanecer';
+        // Esto crea un <h1> con el texto "Robots del Amanecer"
 
-		//
+        // CASO DE USO 2: AMPLIACIÓN DE OBJETOS NATIVOS
+        // Creamos un objeto Date
+        let fecha = new Date();
+        
+        // Proxy para extender la funcionalidad de Date sin modificar su prototipo
+        const miProxyFecha = new Proxy(fecha, {
+            // La trampa 'get' intercepta el acceso a propiedades
+            get: function(target, prop, proxy){
+                if(prop == 'format'){
+                    // Añade un método personalizado 'format' que no existe en Date
+                    return `${target.getDate()}/${target.getMonth()}/${target.getFullYear()}`
+                }else{
+                    // Para cualquier otra propiedad, delega al objeto Date original
+                    return target[prop]
+                }
+            }
+        });
+        // Ahora podemos usar miProxyFecha.format para obtener una fecha formateada
+        // sin modificar el objeto Date nativo
 
-		let fecha = new Date();
-		const miProxyFecha = new Proxy(fecha, {
-			get: function( target, prop, proxy ){
-				if(prop == 'format'){
-					return `${target.getDate()}/${target.getMonth()}/${target.getFullYear()}`
-				}else{
-					return target[prop]
-				}
-			}
-		});
+        // CASO DE USO 3: VALIDACIÓN DE DATOS
+        // Proxy para validar datos antes de almacenarlos
+        const proxyDatos = new Proxy({}, {
+            // La trampa 'set' valida los datos antes de permitir la asignación
+            set(target, prop, value) {
+                if(prop == 'edad' && !Number.isInteger(value)){
+                    // Valida que 'edad' sea un número entero
+                    throw new Error('El valor de edad no es válido');
+                }
 
-		//
+                if(prop == 'fecha' && !/^(0?[1-9]|1[0-2])[\/](0?[1-9]|[12]\d|3[01])[\/](19|20)\d{2}$/.test(value)){
+                    // Valida que 'fecha' tenga el formato MM/DD/YYYY
+                    throw new Error('El valor de fecha no es válido');
+                }
 
-		const proxyDatos = new Proxy({}, {
-			set(target, prop, value) {
-				if(prop == 'edad' && !Number.isInteger(value)){
-					throw new Error('El valor de edad no es válido');
-				}
-
-				if(prop == 'fecha' && !/^(0?[1-9]|1[0-2])[\/](0?[1-9]|[12]\d|3[01])[\/](19|20)\d{2}$/.test(value)){
-					throw new Error('El valor de fecha no es válido');
-				}
-
-				return target[prop] = value;
-			}
-		});
-
-		
-		
-	</script>
+                // Si pasa todas las validaciones, almacena el valor
+                return target[prop] = value;
+            }
+        });
+        // Ejemplos de uso:
+        // proxyDatos.edad = 25; // Correcto
+        // proxyDatos.edad = "25"; // Error: El valor de edad no es válido
+        // proxyDatos.fecha = "12/25/2023"; // Correcto
+        // proxyDatos.fecha = "25/12/2023"; // Error: El valor de fecha no es válido
+        
+    </script>
 
 </body>
 </html>

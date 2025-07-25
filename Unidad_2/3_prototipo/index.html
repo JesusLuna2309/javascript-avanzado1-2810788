@@ -1,19 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		const obj = {
-			nombre: 'Lincy'
-		};
+        // Creamos un objeto literal con una propiedad 'nombre'
+        const obj = {
+            nombre: 'Lincy' // Esta propiedad pertenece directamente al objeto, no a su prototipo
+        };
 
-		console.log(obj);
-		
-	</script>
+        // Mostramos el objeto en consola
+        console.log(obj);
+        // En la consola veremos el objeto con su propiedad 'nombre'
+        // Además, si expandimos el objeto en la consola, veremos su prototipo (__proto__)
+        // El prototipo contiene métodos y propiedades heredadas de Object, como toString, hasOwnProperty, etc.
+        // Esto demuestra el sistema de herencia basado en prototipos de JavaScript
+
+        // ¿Para qué sirve el prototipo?
+        // El prototipo es el mecanismo por el cual los objetos en JavaScript pueden heredar propiedades y métodos de otros objetos.
+        // Cuando accedes a una propiedad o método que no existe directamente en el objeto,
+        // JavaScript lo busca en su prototipo (y así sucesivamente en la cadena de prototipos).
+        // Esto permite compartir funcionalidades entre objetos sin duplicar código.
+        // Por ejemplo, todos los objetos heredan métodos útiles como toString() y hasOwnProperty() gracias al
+
+    </script>
 
 </body>
 </html>

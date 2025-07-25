@@ -1,40 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
-		const target = function (nombre, apellido){
-			console.log(`Mi nombre es ${nombre} ${apellido}`)
-		}
+    <script type="text/javascript">
+        // Definimos una función objetivo (target) que recibirá proxying
+        const target = function (nombre, apellido){
+            console.log(`Mi nombre es ${nombre} ${apellido}`)
+        }
 
-		const handler = {
-			apply: function( target, thisValue, args ) {
-		        console.log( `Se ha llamado la función ${target.name} con los parametros ${args}`);
-		        return target( ...args );
-		   	}
-		}
+        // Definimos un manejador (handler) con trampas (traps)
+        // Las trampas son métodos que interceptan operaciones en el objeto target
+        const handler = {
+            // La trampa 'apply' intercepta las llamadas a la función objetivo
+            // Se ejecuta cuando la función proxy es invocada
+            apply: function( target, thisValue, args ) {
+                // target: la función original
+                // thisValue: el valor de 'this' en la llamada
+                // args: array con los argumentos pasados a la función
+                console.log( `Se ha llamado la función ${target.name} con los parametros ${args}`);
+                // Después de loggear, llamamos a la función original con los mismos argumentos
+                return target( ...args );
+           	}
+        }
 
-		const miProxy = new Proxy(target, handler);
+        // Creamos un proxy para la función target con el handler definido
+        // El proxy actúa como intermediario entre el código y el objeto target
+        const miProxy = new Proxy(target, handler);
 
-		miProxy('Natalia', 'Corea');
+        // Cuando llamamos a miProxy, realmente estamos ejecutando handler.apply
+        // que luego llama a la función original
+        miProxy('Natalia', 'Corea');
+        // Output:
+        // Se ha llamado la función target con los parametros Natalia,Corea
+        // Mi nombre es Natalia Corea
 
-		//
+        //
 
-		const DateProxied = new Proxy(Date, {
-			construct(target, args){
-				console.log( `Creamos un nuevo objeto Date`);
-				return new target(...args)
-			}
-		});
+        // Ejemplo 2: Proxy para un constructor
+        // Aquí interceptamos la creación de instancias de Date
+        const DateProxied = new Proxy(Date, {
+            // La trampa 'construct' intercepta el operador 'new'
+            // Se ejecuta cuando se crea una nueva instancia con new DateProxied()
+            construct(target, args){
+                // target: el constructor original (Date)
+                // args: array con los argumentos pasados al constructor
+                console.log( `Creamos un nuevo objeto Date`);
+                // Llamamos al constructor original con los mismos argumentos
+                return new target(...args)
+            }
+        });
 
-		let fecha = new DateProxied();
-
-		
-		
-	</script>
+        // Creamos una instancia usando el constructor proxy
+        // Esto ejecutará la trampa 'construct' definida arriba
+        let fecha = new DateProxied();
+        // Output: Creamos un nuevo objeto Date
+        
+        /*
+         * Otros usos comunes de Proxy:
+         * 
+         * 1. Validación de propiedades: usar 'set' para validar valores antes de asignarlos
+         * 2. Propiedades virtuales: propiedades calculadas al vuelo con 'get'
+         * 3. Logging: registrar accesos a propiedades y métodos
+         * 4. Lazy loading: cargar datos solo cuando se accede a ellos
+         * 5. Implementar comportamientos como getters/setters automáticos
+         */
+    </script>
 
 </body>
 </html>

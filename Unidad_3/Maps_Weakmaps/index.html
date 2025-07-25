@@ -1,30 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		const objetoMap = new Map();
-		objetoMap.set('un string', 'valor asociado a un string');
-		objetoMap.set({}, 'valor asociado a un objeto');
-		objetoMap.set(12, 'valor asociado a un número');
+        // Creamos un nuevo objeto Map
+        // Map es una estructura de datos que almacena pares clave-valor, similar a un objeto
+        // A diferencia de objetos normales, Map puede usar cualquier valor como clave (incluidos objetos)
+        const objetoMap = new Map();
 
-		for(key of objetoMap){
-			console.log(key)
-		}
+        // Añadimos entradas al Map con el método .set(clave, valor)
+        objetoMap.set('un string', 'valor asociado a un string'); // Clave: string
+        objetoMap.set({}, 'valor asociado a un objeto');          // Clave: objeto vacío
+        objetoMap.set(12, 'valor asociado a un número');          // Clave: número
 
-		for([key, value] of objetoMap){
-			console.log(value)
-		}
+        // Iteración 1: Map devuelve pares [clave, valor] en cada iteración
+        // Aquí no estamos destructurando, así que key contiene el par completo
+        for(key of objetoMap){
+            console.log(key);
+            // Muestra:
+            // ['un string', 'valor asociado a un string']
+            // [{}, 'valor asociado a un objeto']
+            // [12, 'valor asociado a un número']
+        }
 
-		/*const objetoWeakMap = new WeakMap();
-		objetoWeakMap.set('un string', 'valor asociado a un string');
-		objetoWeakMap.set({}, 'valor asociado a un objeto');*/
-		
-	</script>
+        // Iteración 2: Destructuramos el par [clave, valor] directamente en el bucle
+        // Esto nos permite acceder a la clave y valor por separado
+        for([key, value] of objetoMap){
+            console.log(value);
+            // Muestra solo los valores:
+            // 'valor asociado a un string'
+            // 'valor asociado a un objeto'
+            // 'valor asociado a un número'
+        }
+
+        /* Intento de usar WeakMap con claves no válidas (comentado)
+        const objetoWeakMap = new WeakMap();
+        objetoWeakMap.set('un string', 'valor asociado a un string'); // Error: clave debe ser un objeto
+        objetoWeakMap.set({}, 'valor asociado a un objeto'); // Correcto: la clave es un objeto
+        */
+        
+        // Diferencias entre Map y WeakMap:
+        // 1. WeakMap solo acepta objetos como claves (no primitivos)
+        // 2. Las referencias a las claves en WeakMap son "débiles": si no hay otras referencias
+        //    al objeto clave, puede ser recolectado por el garbage collector
+        // 3. WeakMap no es iterable, no tiene métodos como .keys(), .values() o .entries()
+        // 4. No se puede conocer el tamaño de un WeakMap (.size no existe)
+        
+        // Casos de uso de Map:
+        // - Almacenar datos asociados a objetos o valores
+        // - Preservar el orden de inserción (a diferencia de objetos normales)
+        // - Usar cualquier tipo de valor como clave
+        // - Determinar fácilmente el tamaño con .size
+        
+        // Casos de uso de WeakMap:
+        // - Almacenar datos privados asociados a objetos
+        // - Implementar caché que no impida la recolección de basura
+        // - Asociar metadatos a objetos DOM sin causar memory leaks
+
+    </script>
 
 </body>
 </html>

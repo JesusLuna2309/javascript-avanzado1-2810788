@@ -1,63 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-	var libro = {titulo: "Fundación", autor: "Issac Asimov", genero: "Ciencia Ficción", numeroPaginas: 255};
+    // Creamos un objeto con información de un libro
+    var libro = {titulo: "Fundación", autor: "Issac Asimov", genero: "Ciencia Ficción", numeroPaginas: 255};
 
+    // Forma tradicional de extraer propiedades de un objeto
     var titulo = libro.titulo;
     var autor = libro.autor;
     var genero = libro.genero; 
 
-    //
+    // Destructuración básica: extrae las propiedades del objeto en variables con el mismo nombre
     var {titulo, autor, genero} = libro;
+    // Las variables 'titulo', 'autor' y 'genero' ahora contienen los valores correspondientes del objeto 'libro'
 
-    console.log(titulo, autor, genero);
+    console.log(titulo, autor, genero); // Muestra: Fundación Issac Asimov Ciencia Ficción
 
-    //
-
+    // Destructuración con alias: asigna las propiedades a variables con nombres diferentes
     var {titulo: prop, autor: pro2} = libro;
+    // 'prop' contiene el valor de libro.titulo
+    // 'pro2' contiene el valor de libro.autor
 
-    console.log(prop, pro2);
+    console.log(prop, pro2); // Muestra: Fundación Issac Asimov
 
-    //
-
+    // Destructuración con operador rest (...): obtiene el resto de propiedades no mencionadas
     var {titulo, autor, ...otros} = libro;
+    // 'titulo' y 'autor' como antes
+    // 'otros' es un nuevo objeto que contiene las propiedades restantes: {genero: "Ciencia Ficción", numeroPaginas: 255}
 
-    console.log(titulo, autor, otros);
+    console.log(titulo, autor, otros); // Muestra: Fundación Issac Asimov {genero: "Ciencia Ficción", numeroPaginas: 255}
 
-    //
-
+    // Destructuración con nombres de propiedades dinámicos (computados)
     var key = "titulo";
     
     var {[key] : val} = libro;
+    // Usa el valor de 'key' como nombre de propiedad a extraer
+    // 'val' contiene el valor de libro[key], que es libro.titulo
 
-    console.log(val);
+    console.log(val); // Muestra: Fundación
 
-    ///
-
+    // Destructuración anidada: extrae propiedades de objetos anidados
     let libros = {
-    	categorias: {
-    		drama: ['Sensatez y Sentimientos', 'Ana Karenina', 'Orgullo y Prejuicio'],
-		    cienciaFiccion: ['Los robot del amanecer', 'Fundación', 'Segunda Fundación']
-		}
-	}
+        categorias: {
+            drama: ['Sensatez y Sentimientos', 'Ana Karenina', 'Orgullo y Prejuicio'],
+            cienciaFiccion: ['Los robot del amanecer', 'Fundación', 'Segunda Fundación']
+        }
+    }
 
-	var { 
-		categorias:{
-			drama: a,
-			cienciaFiccion: b}
-	} = libros;
+    var { 
+        categorias:{
+            drama: a,
+            cienciaFiccion: b}
+    } = libros;
+    // 'a' contiene el array de libros de drama
+    // 'b' contiene el array de libros de ciencia ficción
+    // Nota: 'categorias' no se convierte en una variable en este caso
 
-console.log(a, b);
-
-
-		
-	</script>
+    console.log(a, b); // Muestra los dos arrays de libros
+        
+    </script>
 
 </body>
 </html>

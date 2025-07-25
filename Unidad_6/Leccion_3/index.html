@@ -1,89 +1,110 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
-		//Funciones puras: Una función pura es aquella que, dada una misma entrada, siempre regresa el mismo valor de salida y no tiene otro efecto secundario observable.
+    <script type="text/javascript">
+        // FUNCIONES PURAS: CONCEPTO CENTRAL EN PROGRAMACIÓN FUNCIONAL
+        
+        // Definición: Una función pura es aquella que, dada una misma entrada, siempre regresa 
+        // el mismo valor de salida y no tiene otro efecto secundario observable.
 
-		//Las funciones siempre devuelven el mismo tipo y, dados los mismos argumentos, devuelven el mismo valor, lo que las hace predecibles.
-		
-		/*
-		mutar datos.
-		modificar archivos.
-		insertar un registro en una base de datos.
-		hacer una llamada http.
-		*/
-
-
-		//función impura:
-
-		let valor = 5;
-
-		function incrementar(){
-			return valor += 1;
-		}
-
-		incrementar();
-		console.log(valor);
-		console.log(incrementar()); 
-
-		//versión casi pura:
-
-		/*let valor = 5;
-
-		function incrementar(){
-			return valor + 1;
-		}
-
-		incrementar();
-		console.log(valor);
-		console.log(incrementar());
-		console.log(incrementar());
-		console.log(incrementar());*/
+        // Las funciones puras siempre devuelven el mismo tipo y, dados los mismos argumentos, 
+        // devuelven el mismo valor, lo que las hace predecibles.
+        
+        /* Ejemplos de efectos secundarios que hacen impura una función:
+        - mutar datos.
+        - modificar archivos.
+        - insertar un registro en una base de datos.
+        - hacer una llamada http.
+        */
 
 
-		//versión pura:
+        // EJEMPLO 1: FUNCIÓN IMPURA
+        // Esta función es impura por dos razones:
+        // 1. Depende de una variable externa (valor)
+        // 2. Modifica el estado externo (valor += 1)
 
-		/*let valor = 5;
+        let valor = 5;
 
-		function incrementar(num){
-			return num + 1;
-		}
+        function incrementar(){
+            return valor += 1; // Modifica la variable externa y devuelve el nuevo valor
+        }
 
-		incrementar(valor);
-		console.log(valor);
-		console.log(incrementar(valor));
-		console.log(incrementar(valor));
-		console.log(incrementar(valor));*/
+        incrementar(); // Efecto secundario: valor ahora es 6
+        console.log(valor); // Output: 6
+        console.log(incrementar()); // Output: 7 (y valor ahora es 7)
 
-		//ejemplo no pura
+        // EJEMPLO 2: VERSIÓN CASI PURA (COMENTADA)
+        // Esta función es "menos impura" porque:
+        // - Ya no modifica la variable externa
+        // - Pero sigue dependiendo de una variable externa, por lo que no es completamente pura
 
-		console.log(Date.now());
-		console.log(Math.random());
+        /*let valor = 5;
 
-		//ejemplo pura
+        function incrementar(){
+            return valor + 1; // No modifica valor, pero sigue dependiendo de él
+        }
 
-		console.log([1,2].map(val => val*2));
+        incrementar(); // No tiene efecto secundario visible, pero depende del estado externo
+        console.log(valor); // Output: 5 (no cambia)
+        console.log(incrementar()); // Output: 6 (siempre el mismo valor para las mismas condiciones)
+        console.log(incrementar()); // Output: 6 (consistente)
+        console.log(incrementar()); // Output: 6 (consistente)*/
 
-		
 
+        // EJEMPLO 3: VERSIÓN PURA (COMENTADA)
+        // Esta función es completamente pura porque:
+        // - No depende de variables externas, solo de sus parámetros
+        // - No modifica estado externo
 
+        /*let valor = 5;
 
-		/*
-		Son más fácilmente testeables, ya que van a retornar el mismo resultado a partir de los mismos parámetros.
-		Pueden ser cacheadas, ya que siempre retornan el mismo resultado podemos almacenar estos resultados en cache (memoizar)
-		Más faciles de entender: Se puede reemplazar la función por su valor de resultado, lo que las hace referencialmente transparentes.
-		Se pueden ejecutar en paralelo, ya que no tienen ninguna dependencia externa.
-		Reduce la cantidad de bugs, ya que no generan alteraciones del estado externo.
-		Si no se utiliza el resultado de una expresión pura, se puede eliminar sin afectar a otras expresiones.
-		*/
+        function incrementar(num){
+            return num + 1; // Solo depende del parámetro de entrada
+        }
 
-		
+        incrementar(valor); // No tiene efecto, solo calcula y "descarta" el resultado
+        console.log(valor); // Output: 5 (no cambia)
+        console.log(incrementar(valor)); // Output: 6 (siempre el mismo para entrada 5)
+        console.log(incrementar(valor)); // Output: 6 (consistente)
+        console.log(incrementar(valor)); // Output: 6 (consistente)*/
 
-	</script>
+        // EJEMPLOS DE FUNCIONES IMPURAS COMUNES
+        // Estas funciones son impuras porque su resultado varía entre llamadas,
+        // incluso con los mismos parámetros
+
+        console.log(Date.now()); // Impura: devuelve la marca de tiempo actual (cambia en cada llamada)
+        console.log(Math.random()); // Impura: devuelve un número aleatorio (cambia en cada llamada)
+
+        // EJEMPLO DE FUNCIÓN PURA INCORPORADA
+        // map() es una función pura: para el mismo array y la misma función de mapeo,
+        // siempre devuelve el mismo resultado
+
+        console.log([1,2].map(val => val*2)); // Pura: siempre devuelve [2,4] para esta entrada
+        
+        /* BENEFICIOS DE LAS FUNCIONES PURAS:
+        
+        1. Son más fácilmente testeables, ya que van a retornar el mismo resultado a partir 
+           de los mismos parámetros.
+           
+        2. Pueden ser cacheadas (memoizadas), ya que siempre retornan el mismo resultado 
+           para los mismos parámetros.
+           
+        3. Más fáciles de entender: Se puede reemplazar la función por su valor de resultado,
+           lo que las hace referencialmente transparentes.
+           
+        4. Se pueden ejecutar en paralelo, ya que no tienen ninguna dependencia externa.
+        
+        5. Reduce la cantidad de bugs, ya que no generan alteraciones del estado externo.
+        
+        6. Si no se utiliza el resultado de una expresión pura, se puede eliminar sin afectar 
+           a otras expresiones.
+        */
+
+    </script>
 
 </body>
 </html>

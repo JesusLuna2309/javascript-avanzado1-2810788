@@ -1,48 +1,103 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		//programacion funcional es un paradigma de programacion. Los paradigmas son maneras en que nosotros podemos estructurar el codigo de una aplicacion. Los paradigmas mas conocidos son OOO, programacion por procedimientos el que generalmente utilizamos para escribir codigo en JS y el funcional
+        // INTRODUCCIÓN A LA PROGRAMACIÓN FUNCIONAL
+        
+        // La programación funcional es un paradigma de programación. Los paradigmas son maneras 
+        // en que podemos estructurar el código de una aplicación. Los paradigmas más conocidos son:
+        // - Programación Orientada a Objetos (OOO)
+        // - Programación por procedimientos (el que tradicionalmente usamos en JS)
+        // - Programación funcional (el enfoque de este ejemplo)
 
-		//En los ultimos años el paradigma funcional se ha vuelto muy popular ya que permite crear código más legible o expresivo. Tambien la ejecución del código es más predecible por lo que nos ayuda a evitar bugs indeseables y dificiles de detectar
+        // En los últimos años el paradigma funcional se ha vuelto muy popular ya que permite 
+        // crear código más legible y expresivo. También la ejecución del código es más predecible,
+        // lo que nos ayuda a evitar bugs indeseables y difíciles de detectar.
 
-		//JS no es un lenguaje funcional en si pero si cumple ciertos requerimientos que nos permiten aplicar principios funcionales en el codigo
-		
-		//Aqui te presento un ejemplo de codigo procesal y uno funcional
+        // JavaScript no es un lenguaje puramente funcional, pero sí cumple ciertos requerimientos 
+        // que nos permiten aplicar principios funcionales en el código.
+        
+        // EJEMPLO COMPARATIVO: CÓDIGO PROCEDURAL VS FUNCIONAL
 
-		//no funcional:
+        // Ejemplo 1: Enfoque procedural (no funcional)
+        // -------------------------------------------
+        // Este código tiene un problema fundamental: depende de una variable externa (val)
+        // Esta dependencia externa hace que la función no sea "pura"
 
-		let val = 10;
+        let val = 10; // Estado global que puede cambiar
 
-		function sumar(){
-			return val + 1;
-		}
+        function sumar(){
+            return val + 1; // Depende de una variable externa (efecto secundario)
+        }
 
-		let temp = sumar();
+        let temp = sumar(); // El resultado depende del valor actual de 'val'
+        // Si 'val' cambia en cualquier parte del código, 'sumar()' dará resultados diferentes
+        // Esto hace que el comportamiento sea menos predecible y más propenso a errores
 
-		//funcional:
-		
-		let val = 10;
+        // Ejemplo 2: Enfoque funcional
+        // ---------------------------
+        // Esta versión aplica principios funcionales básicos
 
-		function sumar(num){
-			return num + 1;
-		}
+        let val1 = 10; // Podría ser una constante para mayor pureza: const val = 10;
 
-		let temp = sumar(val);
+        function sumar(num){
+            return num + 1; // Solo depende de sus parámetros de entrada
+        }
 
-		/*
-		Uso de Funciones Puras (dados los mismos inputs siempre retorna lo mismo, y sin efectos secundarios)
-		Composición de Funciones
-		Evitar el estado compartido
-		Evitar estado cambiante (inmutabilidad)
-		*/
+        let temp1 = sumar(val); // El resultado es predecible y siempre el mismo para el mismo input
 
-	</script>
+        /* 
+         * PRINCIPIOS CLAVE DE LA PROGRAMACIÓN FUNCIONAL:
+         * 
+         * 1. Funciones Puras: 
+         *    - Dados los mismos inputs, siempre retornan el mismo output
+         *    - No tienen efectos secundarios (no modifican estado externo)
+         *    - No dependen de estado externo que pueda cambiar
+         * 
+         * 2. Composición de Funciones:
+         *    - Combinar funciones simples para crear funciones más complejas
+         *    - Por ejemplo: const doble = x => x * 2;
+         *                   const incrementar = x => x + 1;
+         *                   const dobleEIncrementar = x => incrementar(doble(x));
+         * 
+         * 3. Evitar Estado Compartido:
+         *    - Cada función trabaja con sus propios datos
+         *    - Evita dependencias de variables globales o compartidas
+         * 
+         * 4. Inmutabilidad:
+         *    - No modificar datos existentes, sino crear nuevas copias con los cambios
+         *    - Por ejemplo: no arr.push(item), sino newArr = [...arr, item]
+         */
+
+        // EJEMPLO ADICIONAL DE INMUTABILIDAD:
+        
+        // No funcional (mutable)
+        const addItemMutable = (arr, item) => {
+            arr.push(item); // Modifica el array original
+            return arr;
+        };
+        
+        // Funcional (inmutable)
+        const addItemInmutable = (arr, item) => {
+            return [...arr, item]; // Crea un nuevo array sin modificar el original
+        };
+        
+        // EJEMPLO DE COMPOSICIÓN DE FUNCIONES:
+        
+        const multiplicarPor2 = x => x * 2;
+        const sumar5 = x => x + 5;
+        
+        // Componemos las funciones
+        const multiplicarYSumar = x => sumar5(multiplicarPor2(x));
+        
+        console.log(multiplicarYSumar(10)); // (10 * 2) + 5 = 25
+
+    </script>
 
 </body>
 </html>

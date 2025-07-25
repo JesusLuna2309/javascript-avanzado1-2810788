@@ -1,32 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		const promesa = new Promise((resolve, reject)=>{
-			setTimeout(resolve, 500, 5);
-		});
+        // Creamos una promesa que se resolverá con el valor 5 después de 500ms
+        const promesa = new Promise((resolve, reject)=>{
+            setTimeout(resolve, 500, 5);
+        });
 
-		promesa.then(primerValor=>{
-			console.log('El primer valor es: ', primerValor);
-			return primerValor * primerValor
-		}).then(segundoValor=>{
-			throw new Error('un error ha sucedido :(')
-			console.log('El segundo valor es: ', segundoValor);
-			return segundoValor * segundoValor;
-		}).then(tercerValor=>{
-			console.log('El tercer valor es: ', tercerValor);
-		}).catch(error=>{
-			console.log(error);
-		}).finally(()=>{
-			console.log('La cadena ha terminado');
-		});
+        // Iniciamos una cadena de promesas con manejo de errores
+        promesa.then(primerValor=>{
+            // Este callback se ejecuta cuando la promesa inicial se resuelve
+            console.log('El primer valor es: ', primerValor); // Output: "El primer valor es: 5"
+            return primerValor * primerValor // Retorna 25 para el siguiente .then()
+        }).then(segundoValor=>{
+            // Aquí lanzamos un error intencionalmente
+            throw new Error('un error ha sucedido :(')
+            // Este código nunca se ejecutará porque está después del throw
+            console.log('El segundo valor es: ', segundoValor); // Nunca se ejecuta
+            return segundoValor * segundoValor; // Nunca se ejecuta
+        }).then(tercerValor=>{
+            // Este callback nunca se ejecuta porque el anterior lanzó un error
+            // La ejecución salta directamente al bloque catch
+            console.log('El tercer valor es: ', tercerValor); // Nunca se ejecuta
+        }).catch(error=>{
+            // Este callback captura el error lanzado en el segundo .then()
+            console.log(error); // Output: Error: un error ha sucedido :(
+            // Importante: después de manejar el error, la cadena continúa normalmente
+            // Podríamos retornar un valor aquí para "recuperarnos" del error
+        }).finally(()=>{
+            // Este callback se ejecuta SIEMPRE, independientemente de si hubo éxito o error
+            console.log('La cadena ha terminado'); // Output: "La cadena ha terminado"
+            // finally no recibe ningún argumento y su valor de retorno es ignorado
+            // Su propósito es ejecutar código de limpieza (como cerrar conexiones)
+        });
 
-	</script>
+        /* Secuencia de ejecución:
+         * 1. La promesa se resuelve con 5 después de 500ms
+         * 2. El primer .then() recibe 5, muestra "El primer valor es: 5" y retorna 25
+         * 3. El segundo .then() recibe 25, pero lanza un error antes de hacer cualquier cosa
+         * 4. El tercer .then() se omite completamente porque hubo un error
+         * 5. El .catch() captura el error y lo muestra en consola
+         * 6. El .finally() se ejecuta y muestra "La cadena ha terminado"
+         */
+
+        /* Características importantes:
+         * 
+         * 1. Propagación de errores: Un error en cualquier punto detiene la cadena normal 
+         *    y salta al primer .catch()
+         * 
+         * 2. Recuperación de errores: Después del .catch(), la cadena puede continuar 
+         *    normalmente si el .catch() retorna un valor
+         *
+         * 3. finally(): Se ejecuta siempre, haya error o no, ideal para código de limpieza
+         */
+
+    </script>
 
 </body>
 </html>

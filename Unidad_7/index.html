@@ -9,40 +9,68 @@
 
   <script type="text/javascript">
 
+    /**
+     * Clase RequestsHandler
+     * Proporciona una abstracción para realizar peticiones HTTP (CRUD) a una API REST
+     * Implementa un patrón de fachada que simplifica la interacción con la Fetch API
+     */
     class RequestsHandler {
       constructor() {
+        // URL base del endpoint de la API
         this.url = 'https://us-central1-restful-test-257520.cloudfunctions.net/rest-api-example-2';
+        // Estilos CSS para los mensajes de consola (debugging)
         this.color = 'color: purple;';
         this.green = 'background: green; color: white; display: block;';
         this.red = 'background: red; color: white; display: block;';
       }
+
+      /**
+       * Devuelve los headers estándar para las peticiones
+       * @returns {Object} Objeto con los headers necesarios
+       */
       getHeaders() {
         return {
-          "Content-type": "application/json"
+          "Content-type": "application/json" // Define que enviamos y esperamos JSON
         }
       }
+
+      /**
+       * Método principal que realiza peticiones HTTP usando Fetch API
+       * @param {string} request - Ruta adicional a añadir a la URL base (opcional)
+       * @param {Object} params - Parámetros/datos a enviar en la petición
+       * @param {string} tipoRequest - Método HTTP a utilizar (GET, POST, PUT, DELETE)
+       * @returns {Promise} Promesa que resuelve con los datos de la respuesta o rechaza con error
+       */
       hacerRequest(request, params, tipoRequest) {
 
         return new Promise((resolve, reject) => {
           console.log('%c enviando request con los parámetros =>', this.color, params);
-          fetch(this.url + (request | ''), {
+          
+          // Hay un error en esta línea: (request | '') debería ser (request || '')
+          // El operador | es bitwise OR, no un OR lógico
+          fetch(this.url + (request || ''), {
             headers: this.getHeaders(),
             method: tipoRequest,
+            // Solo incluye body en métodos diferentes a GET
             body: tipoRequest !== 'GET' ? JSON.stringify(params) : null
           })
             .then((response) => {
+              // Verificación del estado de la respuesta HTTP
               if (!response.ok) {
                 throw Error(response.statusText);
               }
               return response;
             })
             .then(response => {
+              // Parsea la respuesta a JSON
               return response.json();
             }).then(data => {
+              // Log de éxito y resolución de la promesa
               console.log('%c datos recibidos =>', this.green, data);
               resolve(data);
             })
             .catch(error => {
+              // Captura y gestión de errores
               console.log('%c Request falló', this.red, error);
               reject(new Error(error));
             });
@@ -50,14 +78,19 @@
       }
     }
 
+    // Creamos una instancia de la clase RequestsHandler
     const requestsHandler = new RequestsHandler();
 
-    // Método GET:
+    // EJEMPLOS DE USO PARA OPERACIONES CRUD:
+
+    // Método GET: Recuperar datos (READ)
+    // No requiere body, por eso params es un objeto vacío
     requestsHandler.hacerRequest(null, {}, 'GET').then(datos => {
       console.log(datos);
     });
 
-    // Método POST:
+    // Método POST: Crear un nuevo recurso (CREATE)
+    // Se envía un objeto con los datos del nuevo libro
     requestsHandler.hacerRequest(null, {
       libro: {
         nombre: 'Fundación',
@@ -68,18 +101,21 @@
     });
 
 
-    // Método PUT:
+    // NOTA: Este ejemplo tiene un error, usa POST en lugar de PUT
+    // Método PUT: Actualizar un recurso existente (UPDATE)
+    // Se envía un objeto con el ID y los datos actualizados
     requestsHandler.hacerRequest(null, {
       libro: {
         id: '1',
         nombre: 'Fundación',
         autor: 'Issac Asimov',
       }
-    }, 'POST').then(datos => {
+    }, 'POST').then(datos => { // Debería ser 'PUT' en lugar de 'POST'
       console.log(datos);
     });
 
-    // Método DELETE:
+    // Método DELETE: Eliminar un recurso (DELETE)
+    // Se envía un objeto con el ID del recurso a eliminar
     requestsHandler.hacerRequest(null, {
       libro: { id: '1'} }, 'DELETE').then(datos => {
       console.log(datos);

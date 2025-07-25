@@ -1,42 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+    <title></title>
 </head>
 <body>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-		function primerProceso(){
-			return new Promise((resolve, reject)=>{
-				setTimeout(resolve, 2000, 'primer valor');
-			});
-		}
+        // Función que devuelve una promesa que se resuelve después de 2 segundos
+        function primerProceso(){
+            return new Promise((resolve, reject)=>{
+                setTimeout(resolve, 2000, 'primer valor');
+                // Esta promesa siempre se resuelve con éxito después de 2000ms
+                // con el valor 'primer valor'
+            });
+        }
 
-		function segundoProceso(){
-			return new Promise((resolve, reject)=>{
-				setTimeout(resolve, 1000, 'segundo valor');
-			});
-		}
+        // Función que devuelve una promesa que se resuelve después de 1 segundo
+        function segundoProceso(){
+            return new Promise((resolve, reject)=>{
+                setTimeout(resolve, 1000, 'segundo valor');
+                // Esta promesa siempre se resuelve con éxito después de 1000ms
+                // con el valor 'segundo valor'
+            });
+        }
 
-		function tercerProceso(){
-			return new Promise((resolve, reject)=>{
-				setTimeout(resolve, 1000, 'tercer valor');
-			});
-		}
+        // Función que devuelve una promesa que se resuelve después de 1 segundo
+        function tercerProceso(){
+            return new Promise((resolve, reject)=>{
+                setTimeout(resolve, 1000, 'tercer valor');
+                // Esta promesa siempre se resuelve con éxito después de 1000ms
+                // con el valor 'tercer valor'
+            });
+        }
 
-		async function llamaTodas(){
+        // Función asíncrona: el prefijo 'async' indica que esta función siempre devuelve una promesa
+        // y permite usar 'await' dentro de su cuerpo
+        async function llamaTodas(){
+            // await pausa la ejecución de la función hasta que la promesa se resuelva
+            // y devuelve directamente el valor resuelto (no el objeto Promise)
+            let primerValor = await primerProceso();
+            // La ejecución se detiene aquí durante 2 segundos, luego continúa
+            // primerValor = 'primer valor'
+            
+            let segundoValor = await segundoProceso();
+            // La ejecución se detiene aquí durante 1 segundo adicional, luego continúa
+            // segundoValor = 'segundo valor'
+            
+            let tercerValor = await tercerProceso();
+            // La ejecución se detiene aquí durante 1 segundo adicional, luego continúa
+            // tercerValor = 'tercer valor'
 
-			let primerValor = await primerProceso();
-			let segundoValor = await segundoProceso();
-			let tercerValor = await tercerProceso();
+            // En total, la función toma aproximadamente 4 segundos en completarse
+            // porque ejecuta las promesas en secuencia, no en paralelo
+            
+            console.log(primerValor, segundoValor, tercerValor);
+            // Output después de ~4 segundos: "primer valor segundo valor tercer valor"
+        }
 
-			console.log(primerValor, segundoValor, tercerValor);
-		}
+        // Llamamos a la función asíncrona
+        // Aunque devuelve una promesa, no estamos usando el resultado
+        llamaTodas();
+        // Esta línea se ejecuta inmediatamente, no espera a que llamaTodas() termine
 
-		llamaTodas();
+        // Para ejecutar las promesas en paralelo con async/await, usaríamos Promise.all:
+        /*
+        async function llamaTodasEnParalelo(){
+            // Inicia todas las promesas simultáneamente
+            const promesa1 = primerProceso();
+            const promesa2 = segundoProceso();
+            const promesa3 = tercerProceso();
+            
+            // Espera a que todas terminen
+            const [primerValor, segundoValor, tercerValor] = await Promise.all([promesa1, promesa2, promesa3]);
+            
+            // Esta línea se ejecuta después de ~2 segundos (el tiempo de la promesa más lenta)
+            console.log(primerValor, segundoValor, tercerValor);
+        }
+        */
 
-	</script>
+    </script>
 
 </body>
 </html>
